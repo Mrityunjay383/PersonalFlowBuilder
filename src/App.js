@@ -18,11 +18,11 @@ function Editor() {
 }
 
 function App() {
-  const [visible, setVisible] = useState(true);
 
   return (
     <div className="App">
-      {visible && <Editor />}
+      <h1>This is a the flow Component</h1>
+      <Editor/>
     </div>
   );
 }
