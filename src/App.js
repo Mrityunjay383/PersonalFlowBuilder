@@ -1,28 +1,16 @@
 import React, {  useState } from "react";
-import { useRete } from "./rete.js";
 
 import "./App.css";
 
-function Editor() {
-  const [setContainer] = useRete();
-
-  return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh"
-      }}
-      ref={(ref) => ref && setContainer(ref)}
-    />
-  );
-}
+import FLow from "./FlowBuilder/Flow"
 
 function App() {
 
   return (
     <div className="App">
       <h1>This is a the flow Component</h1>
-      <Editor/>
+      <hr/>
+      <FLow />
     </div>
   );
 }
