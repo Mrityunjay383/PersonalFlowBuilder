@@ -1,6 +1,6 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
-import playIcon from "../images/playIcon.svg";
+import playIcon from "./images/playIcon.svg";
 export class MyNode extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
