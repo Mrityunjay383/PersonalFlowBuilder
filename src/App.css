@@ -8,6 +8,8 @@
   .output-title{
     color:black !important;
   }
-  .control{
-    
-  }
+ .playIcon{
+    height: 16px;
+    background-color: #60CC6C;
+    border-radius: 100%;
+ }

@@ -72,7 +72,7 @@ class AddComponent extends Rete.Component {
   }
 
   builder(node) {
-  var out = new Rete.Output("num", "template", numSocket);
+  var out = new Rete.Output("num", "The First Step", numSocket);
 
     return node
       .addControl(new NumControl(this.editor, "preview", node, true))

@@ -1,5 +1,6 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
+import playIcon from "../images/playIcon.svg";
 export class MyNode extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
@@ -8,7 +9,7 @@ export class MyNode extends Node {
     return (
       <div className={`node`} style={{ background: "white"}}>
         <div className="title">
-           {node.name} 
+        <img className="playIcon"src={playIcon}/> {node.name} 
         </div>
         {/* Outputs */}
       
@@ -44,7 +45,7 @@ export class MyNode extends Node {
         ))}
           {outputs.map((output) => (
           <div className="output" key={output.key}>
-            <div className="output-title">{output.name}</div>
+            <div className="output-title" style={{fontSize:"10px"}}> {output.name}</div>
             <Socket
               type="output"
               socket={output.socket}
