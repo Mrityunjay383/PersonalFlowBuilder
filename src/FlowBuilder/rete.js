@@ -12,12 +12,12 @@ var numSocket = new Rete.Socket("Number value");
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
     <input
-      type="number"
-      value={value}
+      type="button"
+      value="Add Template"
       ref={(ref) => {
         ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
       }}
-      onChange={(e) => onChange(+e.target.value)}
+      onCLick={(e) => onChange(+e.target.value)}
     />
   );
 
@@ -49,8 +49,9 @@ class NumControl extends Rete.Control {
 
 class NumComponent extends Rete.Component {
   constructor() {
-    super("Number");
+    super( `Start`);
   }
+
 
   builder(node) {
     var out1 = new Rete.Output("num", "Number", numSocket);
@@ -66,21 +67,14 @@ class NumComponent extends Rete.Component {
 
 class AddComponent extends Rete.Component {
   constructor() {
-    super("Add");
+    super("Start");
     this.data.component = MyNode; // optional
   }
 
   builder(node) {
-    var inp1 = new Rete.Input("num1", "Number", numSocket);
-    var inp2 = new Rete.Input("num2", "Number2", numSocket);
-    var out = new Rete.Output("num", "Number", numSocket);
-
-    inp1.addControl(new NumControl(this.editor, "num1", node));
-    inp2.addControl(new NumControl(this.editor, "num2", node));
+  var out = new Rete.Output("num", "template", numSocket);
 
     return node
-      .addInput(inp1)
-      .addInput(inp2)
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
@@ -99,7 +93,7 @@ class AddComponent extends Rete.Component {
 }
 
 export async function createEditor(container) {
-  var components = [new NumComponent(), new AddComponent()];
+  var components = new AddComponent();
 
   var editor = new Rete.NodeEditor("demo@0.1.0", container);
   editor.use(ConnectionPlugin);
@@ -108,25 +102,15 @@ export async function createEditor(container) {
 
   var engine = new Rete.Engine("demo@0.1.0");
 
-  components.forEach((c) => {
-    editor.register(c);
-    engine.register(c);
-  });
-
-  var n1 = await components[0].createNode({ num: 2 });
-  var n2 = await components[0].createNode({ num: 3 });
-  var add = await components[1].createNode();
-
-  n1.position = [80, 200];
-  n2.position = [80, 400];
+  editor.register(components)
+  var add = await components.createNode();
   add.position = [500, 240];
 
-  editor.addNode(n1);
-  editor.addNode(n2);
+
   editor.addNode(add);
 
-  editor.connect(n1.outputs.get("num"), add.inputs.get("num1"));
-  editor.connect(n2.outputs.get("num"), add.inputs.get("num2"));
+ add.inputs.get("num1");
+ add.inputs.get("num2");
 
   editor.on(
     "process nodecreated noderemoved connectioncreated connectionremoved",

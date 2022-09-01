@@ -1,28 +1,17 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
-
 export class MyNode extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
     const { outputs, controls, inputs, selected } = this.state;
 
     return (
-      <div className={`node ${selected}`} style={{ background: "grey" }}>
+      <div className={`node`} style={{ background: "white"}}>
         <div className="title">
-          {"<<"} {node.name} {">>"}
+           {node.name} 
         </div>
         {/* Outputs */}
-        {outputs.map((output) => (
-          <div className="output" key={output.key}>
-            <div className="output-title">{output.name}</div>
-            <Socket
-              type="output"
-              socket={output.socket}
-              io={output}
-              innerRef={bindSocket}
-            />
-          </div>
-        ))}
+      
         {/* Controls */}
         {controls.map((control) => (
           <Control
@@ -51,6 +40,17 @@ export class MyNode extends Node {
                 innerRef={bindControl}
               />
             )}
+          </div>
+        ))}
+          {outputs.map((output) => (
+          <div className="output" key={output.key}>
+            <div className="output-title">{output.name}</div>
+            <Socket
+              type="output"
+              socket={output.socket}
+              io={output}
+              innerRef={bindSocket}
+            />   
           </div>
         ))}
       </div>

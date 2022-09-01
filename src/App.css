@@ -1,5 +1,13 @@
 .App {
     font-family: sans-serif;
-    text-align: center;
   }
   
+  .node .title{
+    color : black !important ;
+  }
+  .output-title{
+    color:black !important;
+  }
+  .control{
+    
+  }
