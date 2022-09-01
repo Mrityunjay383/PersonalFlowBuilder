@@ -17,7 +17,10 @@ class NumControl extends Rete.Control {
       ref={(ref) => {
         ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
       }}
-      onCLick={(e) => onChange(+e.target.value)}
+      onClick={(e) => {
+        onChange(value+1)
+        console.log(value)
+      }}
     />
   );
 
@@ -116,6 +119,9 @@ export async function createEditor(container) {
     "process nodecreated noderemoved connectioncreated connectionremoved",
     async () => {
       console.log("process");
+      let newNode = await components.createNode();
+      newNode.position=[400,300];
+     
       await engine.abort();
       await engine.process(editor.toJSON());
     }
