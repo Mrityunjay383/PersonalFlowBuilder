@@ -6,6 +6,7 @@ import ConnectionPlugin from "rete-connection-plugin";
 import AreaPlugin from "rete-area-plugin";
 import Context from "efficy-rete-context-menu-plugin";
 import { MyNode } from "./MyNode";
+import { Action } from "./Action";
 
 var numSocket = new Rete.Socket("Number value");
 
@@ -29,7 +30,7 @@ class NumControl extends Rete.Control {
     this.emitter = emitter;
     this.key = key;
     this.component = NumControl.component;
-
+    console.log("this is control ",node)
     const initial = node.data[key] || 0;
 
     node.data[key] = initial;
@@ -52,15 +53,19 @@ class NumControl extends Rete.Control {
 
 class NumComponent extends Rete.Component {
   constructor() {
-    super( `Start`);
+    super( `Action`);
+    this.data.component = MyNode
   }
 
 
   builder(node) {
-    var out1 = new Rete.Output("num", "Number", numSocket);
-    var ctrl = new NumControl(this.editor, "num", node);
-
-    return node.addControl(ctrl).addOutput(out1);
+      var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var out = new Rete.Output("num", "Next Step", numSocket);
+    {console.log(node)}
+    return node
+    .addInput(inp1)
+      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addOutput(out);
   }
 
   worker(node, inputs, outputs) {
@@ -76,7 +81,7 @@ class AddComponent extends Rete.Component {
 
   builder(node) {
   var out = new Rete.Output("num", "The First Step", numSocket);
-
+    {console.log(node)}
     return node
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
@@ -97,7 +102,7 @@ class AddComponent extends Rete.Component {
 
 export async function createEditor(container) {
   var components = new AddComponent();
-
+  var components2=new NumComponent();
   var editor = new Rete.NodeEditor("demo@0.1.0", container);
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, { createRoot });
@@ -105,7 +110,8 @@ export async function createEditor(container) {
 
   var engine = new Rete.Engine("demo@0.1.0");
 
-  editor.register(components)
+  editor.register(components);
+  editor.register(components2);
   var add = await components.createNode();
   add.position = [500, 240];
 
@@ -114,19 +120,28 @@ export async function createEditor(container) {
 
  add.inputs.get("num1");
  add.inputs.get("num2");
-
+ 
   editor.on(
     "process nodecreated noderemoved connectioncreated connectionremoved",
     async () => {
       console.log("process");
-      let newNode = await components.createNode();
-      newNode.position=[400,300];
-     
+      console.log(editor.toJSON())
       await engine.abort();
       await engine.process(editor.toJSON());
     }
   );
+  editor.on("updateconnection",async( el, connection, points)=>{
+    console.log(el,connection,points);
 
+  });
+  editor.on("keydown",async(keyEvent)=>{
+      if(keyEvent.key=="Enter"){
+        var newnode= await components2.createNode();
+        newnode.position = [400, 440];
+        editor.addNode(newnode);
+
+      }
+  });
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
