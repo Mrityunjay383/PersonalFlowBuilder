@@ -13,3 +13,15 @@
     background-color: #60CC6C;
     border-radius: 100%;
  }
+
+ .socket  {
+    background-color: red !important;
+    height:12px !important;
+    width:12px !important;
+  }
+  
+  .connection .main-path{
+    stroke: #60CC6C !important;
+    fill: antiquewhite !important;
+    stroke-width: 3px !important;
+  }

@@ -9,7 +9,8 @@ import { MyNode } from "./MyNode";
 import { Action } from "./Action";
 
 var numSocket = new Rete.Socket("Number value");
-
+const anyTypeSocket = new Rete.Socket('Any type');
+numSocket.combineWith(anyTypeSocket);
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
     <input
@@ -127,12 +128,17 @@ export async function createEditor(container) {
       console.log("process");
       console.log(editor.toJSON())
       await engine.abort();
+      
       await engine.process(editor.toJSON());
     }
   );
-  editor.on("updateconnection",async( el, connection, points)=>{
-    console.log(el,connection,points);
+  // editor.on("updateconnection",async( el, connection, points)=>{
+  //   console.log(el,connection,points);
 
+  // });
+  editor.on("connectioncreate",async(output,input)=>{
+      console.log("this is output",output);
+      console.log("this is input",input);
   });
   editor.on("keydown",async(keyEvent)=>{
       if(keyEvent.key=="Enter"){
@@ -142,10 +148,15 @@ export async function createEditor(container) {
 
       }
   });
+  // editor.on("click",async(e,container)=>{
+  //   console.log(e.e);
+    
+  // });
+
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
-
+  console.log(editor);
   return editor;
 }
 
@@ -157,7 +168,8 @@ export function useRete() {
     if (container) {
       createEditor(container).then((value) => {
         console.log("created");
-        editorRef.current = value;
+        editorRef.current = value;  
+        console.log(value);
       });
     }
   }, [container]);

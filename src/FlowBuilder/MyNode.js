@@ -1,9 +1,10 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
 import playIcon from "./images/playIcon.svg";
+import "../App.css"
 export class MyNode extends Node {
 
-  
+
   render() {
     const { node, bindSocket, bindControl } = this.props;
     const { outputs, controls, inputs, selected } = this.state;
@@ -28,6 +29,7 @@ export class MyNode extends Node {
         {inputs.map((input) => (
           <div className="input" key={input.key}>
             <Socket
+              style={{backgroundColor:"red"}}
               type="input"
               socket={input.socket}
               io={input}
