@@ -3,6 +3,7 @@ import Rete from "rete";
 import { createRoot } from "react-dom/client";
 import ReactRenderPlugin from "rete-react-render-plugin";
 import ConnectionPlugin from "rete-connection-plugin";
+import ConnectionPathPlugin from 'rete-connection-path-plugin';
 import AreaPlugin from "rete-area-plugin";
 import Context from "efficy-rete-context-menu-plugin";
 import { MyNode } from "./MyNode";
@@ -94,7 +95,7 @@ class AddComponent extends Rete.Component {
     var n1 = inputs["num1"].length ? inputs["num1"][0] : node.data.num1;
     var n2 = inputs["num2"].length ? inputs["num2"][0] : node.data.num2;
     var sum = n1 + n2;
-
+    
     this.editor.nodes
       .find((n) => n.id === node.id)
       .controls.get("preview")
@@ -107,10 +108,13 @@ export async function createEditor(container) {
   var components = new AddComponent();
   var components2=new NumComponent();
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
-  editor.use(ConnectionPlugin);
+  editor.use(ConnectionPlugin,);
   editor.use(ReactRenderPlugin, { createRoot });
   editor.use(Context);
-
+  editor.use(ConnectionPathPlugin, { 
+    options: { vertical: false, curvature: 0.4 },
+    arrow: true
+   });
   var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
