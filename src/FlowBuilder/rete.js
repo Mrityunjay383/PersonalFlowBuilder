@@ -132,15 +132,15 @@ export async function createEditor(container) {
       await engine.abort();
 
       await engine.process(editor.toJSON());
+      console.log("editor-->",editor)
     }
   );
-  // editor.on("updateconnection",async( el, connection, points)=>{
-  //   console.log(el,connection,points);
+  editor.on("updateconnection",async( el, connection, points)=>{
+    console.log(el,connection,points);
 
-  // });
-  editor.on("connectioncreate",async(output,input)=>{
-      console.log("this is output",output);
-      console.log("this is input",input);
+  });
+  editor.on("connectioncreate",async(connection)=>{
+      console.log("this is connection==>",connection);
   });
   editor.on("keydown", async(keyEvent)=>{
       if(keyEvent.key=="Enter"){
@@ -151,6 +151,7 @@ export async function createEditor(container) {
         await engine.abort();
 
         await engine.process(editor.toJSON());
+        
       }
   });
 
@@ -165,7 +166,10 @@ export async function createEditor(container) {
 
     var newnode= await components2.createNode();
     newnode.position = [x, y];
-    editor.addNode(newnode);
+      console.log("newnode -->",newnode);
+      const connections={input:add,output:newnode};
+      editor.addNode(newnode);
+     editor.connect(data1,newnode.inputs.get("num1"));
 
     await engine.abort();
 
