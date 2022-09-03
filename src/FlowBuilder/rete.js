@@ -11,6 +11,8 @@ import { Action } from "./Action";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
+
+
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
     <input
@@ -104,12 +106,12 @@ class AddComponent extends Rete.Component {
 export async function createEditor(container) {
   var components = new AddComponent();
   var components2=new NumComponent();
-  var editor = new Rete.NodeEditor("demo@0.1.0", container);
+  var editor = new Rete.NodeEditor("Flow@0.1.0", container);
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, { createRoot });
   editor.use(Context);
 
-  var engine = new Rete.Engine("demo@0.1.0");
+  var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
   editor.register(components2);
@@ -121,14 +123,14 @@ export async function createEditor(container) {
 
  add.inputs.get("num1");
  add.inputs.get("num2");
- 
+
   editor.on(
     "process nodecreated noderemoved connectioncreated connectionremoved",
     async () => {
       console.log("process");
       console.log(editor.toJSON())
       await engine.abort();
-      
+
       await engine.process(editor.toJSON());
     }
   );
@@ -140,17 +142,38 @@ export async function createEditor(container) {
       console.log("this is output",output);
       console.log("this is input",input);
   });
-  editor.on("keydown",async(keyEvent)=>{
+  editor.on("keydown", async(keyEvent)=>{
       if(keyEvent.key=="Enter"){
         var newnode= await components2.createNode();
-        newnode.position = [400, 440];
+        newnode.position = [400, 240];
         editor.addNode(newnode);
 
+        await engine.abort();
+
+        await engine.process(editor.toJSON());
       }
   });
+
+  let x,y;
+  editor.on("connectionpath", async (data) => {
+    console.log("connectionpath ", data);
+    x = data.points[2];
+    y = data.points[3];
+  })
+  editor.on("connectiondrop", async (data1) => {
+    console.log("connectiondrop ", data1);
+
+    var newnode= await components2.createNode();
+    newnode.position = [x, y];
+    editor.addNode(newnode);
+
+    await engine.abort();
+
+    await engine.process(editor.toJSON());
+  })
   // editor.on("click",async(e,container)=>{
   //   console.log(e.e);
-    
+
   // });
 
   editor.view.resize();
@@ -168,7 +191,7 @@ export function useRete() {
     if (container) {
       createEditor(container).then((value) => {
         console.log("created");
-        editorRef.current = value;  
+        editorRef.current = value;
         console.log(value);
       });
     }

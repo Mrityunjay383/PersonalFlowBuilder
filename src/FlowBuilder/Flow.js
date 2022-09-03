@@ -11,16 +11,16 @@ function Editor() {
     <div
       style={{
         width: "100vw",
-        height: "100vh"
+        height: "80vh"
       }}
       ref={(ref) => ref && setContainer(ref)}
     >
       <div>
-      <input type="button" value="Action" onClick={ handleClick}/>
+        <input type="button" value="Action" onClick={handleClick}/>
       </div>
     </div>
     </>
-    
+
   );
 }
 
