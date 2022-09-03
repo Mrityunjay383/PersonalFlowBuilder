@@ -158,8 +158,7 @@ export async function createEditor(container) {
   let x,y;
   editor.on("connectionpath", async (data) => {
     console.log("connectionpath ", data);
-    x = data.points[2];
-    y = data.points[3];
+    [x, y] = [data.points[2], data.points[3]];
   })
   editor.on("connectiondrop", async (data1) => {
     console.log("connectiondrop ", data1);
