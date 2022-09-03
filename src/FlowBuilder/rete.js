@@ -95,7 +95,7 @@ class AddComponent extends Rete.Component {
     var n1 = inputs["num1"].length ? inputs["num1"][0] : node.data.num1;
     var n2 = inputs["num2"].length ? inputs["num2"][0] : node.data.num2;
     var sum = n1 + n2;
-    
+
     this.editor.nodes
       .find((n) => n.id === node.id)
       .controls.get("preview")
@@ -111,9 +111,12 @@ export async function createEditor(container) {
   editor.use(ConnectionPlugin,);
   editor.use(ReactRenderPlugin, { createRoot });
   editor.use(Context);
-  editor.use(ConnectionPathPlugin, { 
+  editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
-    arrow: true
+    arrow: {
+      color: "red",
+      marker: 'M-5,-10 L-5,10 L20,0 z'
+    }
    });
   var engine = new Rete.Engine("Flow@0.1.0");
 
@@ -155,7 +158,7 @@ export async function createEditor(container) {
         await engine.abort();
 
         await engine.process(editor.toJSON());
-        
+
       }
   });
 
@@ -166,6 +169,7 @@ export async function createEditor(container) {
   })
   editor.on("connectiondrop", async (data1) => {
     console.log("connectiondrop ", data1);
+
 
     var newnode= await components2.createNode();
     newnode.position = [x, y];

@@ -1,7 +1,7 @@
 .App {
     font-family: sans-serif;
   }
-  
+
   .node .title{
     color : black !important ;
   }
@@ -15,13 +15,16 @@
  }
 
  .socket  {
-    background-color: red !important;
+    background-color: #333 !important;
+    border: 1px soild #333 !important;
     height:12px !important;
     width:12px !important;
   }
-
+  .socket .input {
+    margin-left: 0 !important;
+  }
   .connection .main-path{
-    stroke: #60CC6C !important;
-    fill: antiquewhite !important;
+    stroke: gray !important;
+    /* fill: antiquewhite !important; */
     stroke-width: 3px !important;
   }
