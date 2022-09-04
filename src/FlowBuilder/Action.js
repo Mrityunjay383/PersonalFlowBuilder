@@ -7,12 +7,12 @@ export class Action extends Node {
     const { outputs, controls, inputs, selected } = this.state;
 
     return (
-      <div className={`node`} style={{ background: "white"}}>
+      <div className={`node actionNode`} style={{ background: "#FDFDFD"}}>
         
   {/* Inputs */}
   {inputs.map((input) => (
-          <div className="input" key={input.key}>
-            <div className="title">
+          
+            <div className="title actionTitle"key={input.key} >
             <Socket
               type="input"
               socket={input.socket}
@@ -22,7 +22,7 @@ export class Action extends Node {
             <img className="playIcon"src={playIcon}/> {node.name} 
             </div>
             
-          </div>
+          
         ))}
       
         {/* Controls */}

@@ -10,7 +10,7 @@ export class MyNode extends Node {
     const { outputs, controls, inputs, selected } = this.state;
 
     return (
-      <div className={`node`} style={{ background: "white"}}>
+      <div className={`node`} style={{ background: "#FDFDFD"}}>
         <div className="title">
         <img className="playIcon"src={playIcon}/> {node.name} 
         </div>

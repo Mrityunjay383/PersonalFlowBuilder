@@ -7,6 +7,7 @@ function Editor() {
     <>
     <div
       style={{
+        backgroundColor:"rgb(242,245,247)",
         width: "100vw",
         height: "80vh"
       }}

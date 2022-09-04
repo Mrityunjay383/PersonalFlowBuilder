@@ -10,7 +10,18 @@ export class SmartDelay extends Node {
       <div className={`node`} style={{ background: "#FDFDFD"}}>
         
   {/* Inputs */}
-  {inputs.map((input) => (
+        {/* Controls */}
+        {controls.map((control) => (
+          <Control
+            className="control"
+            key={control.key}
+            control={control}
+            innerRef={bindControl}
+          />
+        ))}
+
+        <div>
+        {inputs.map((input) => (
           <div className="input" key={input.key}>
             <div className="title">
             <Socket
@@ -24,29 +35,7 @@ export class SmartDelay extends Node {
             
           </div>
         ))}
-      
-        {/* Controls */}
-        {controls.map((control) => (
-          <Control
-            className="control"
-            key={control.key}
-            control={control}
-            innerRef={bindControl}
-          />
-        ))}
-      
-          {outputs.map((output) => (
-          <div className="output" key={output.key}>
-            <div className="output-title" style={{fontSize:"10px"}}> {output.name}</div>
-            {console.log(output.socket)}
-            <Socket
-              type="output"
-              socket={output.socket}
-              io={output}
-              innerRef={bindSocket}
-            />   
-          </div>
-        ))}
+        </div>
       </div>
     );
   }
