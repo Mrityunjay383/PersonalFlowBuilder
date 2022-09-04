@@ -12,6 +12,7 @@ import { Action } from "./Action";
 import { Condition } from "./condition";
 import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
+
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
@@ -156,23 +157,16 @@ export async function createEditor(container) {
   editor.use(ConnectionPlugin,);
   editor.use(ReactRenderPlugin, { createRoot });
 
-  editor.use(ContextMenuPlugin, {
-		searchBar: false,
-		rename(component) {
-			return `+ ${component.name}`;
-		},
-    items: {
-      "Cancel":()=> {
-        console.log(" items!");
-      }
-		}
-	});
+  editor.use(ContextMenuPlugin,{
+    searchBar: false, // true by default
 
+
+  });
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
-      color: "#8492A6",
-      marker: 'M-5,-10 L-5,10 L25,0 z'
+      color: "red",
+      marker: 'M-5,-10 L-5,10 L20,0 z'
     }
    });
   var engine = new Rete.Engine("Flow@0.1.0");
@@ -223,33 +217,33 @@ export async function createEditor(container) {
 
   let x,y;
   editor.on("connectionpath", async (data) => {
+    console.log("connectionpath ", data);
     [x, y] = [data.points[2], data.points[3]];
   })
   editor.on("connectiondrop", async (data1) => {
     console.log("connectiondrop ", data1);
 
 
-    // var newnode= await components2.createNode();
-    // newnode.position = [x, y];
-    //   console.log("newnode -->",newnode);
-    //   const connections={input:add,output:newnode};
-    //   editor.addNode(newnode);
-    //  editor.connect(data1,newnode.inputs.get("num1"));
+    var newnode= await components2.createNode();
+    newnode.position = [x, y];
+      console.log("newnode -->",newnode);
+      const connections={input:add,output:newnode};
+      editor.addNode(newnode);
+     editor.connect(data1,newnode.inputs.get("num1"));
 
-    // await engine.abort();
+    await engine.abort();
 
-    // await engine.process(editor.toJSON());
+    await engine.process(editor.toJSON());
   })
   // editor.on("click",async(e,container)=>{
   //   console.log(e.e);
 
   // });
-  editor.on('contextmenu', (data) => {
-    console.log("mouseEvent of context menu-->",data);
-
+  editor.on('showcontextmenu', ({ e,node }) => {
+    console.log("mouseEvent of context menu-->",e);
+    console.log(node);
+    return !node;
 });
-
-
 
   editor.view.resize();
   editor.trigger("process");
