@@ -6,8 +6,12 @@ import ConnectionPlugin from "rete-connection-plugin";
 import ConnectionPathPlugin from 'rete-connection-path-plugin';
 import AreaPlugin from "rete-area-plugin";
 import Context from "efficy-rete-context-menu-plugin";
+import ContextMenuPlugin, { Menu, Item, Search } from 'rete-context-menu-plugin';
 import { MyNode } from "./MyNode";
 import { Action } from "./Action";
+import { Condition } from "./condition";
+import { extend } from "@vue/shared";
+import { SmartDelay } from "./SmartDelay";
 
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
@@ -58,7 +62,7 @@ class NumControl extends Rete.Control {
 class NumComponent extends Rete.Component {
   constructor() {
     super( `Action`);
-    this.data.component = MyNode
+    this.data.component =Action
   }
 
 
@@ -76,10 +80,50 @@ class NumComponent extends Rete.Component {
     outputs["num"] = node.data.num;
   }
 }
+class  SmartDelayComponent extends Rete.Component{
+  constructor() {
+    super( `Smart Delay`);
+    this.data.component =SmartDelay;
+  }
+  builder(node){
+    var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var out = new Rete.Output("num", "Next Step", numSocket);
+    {console.log(node)}
+    return node
+    .addInput(inp1)
+      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addOutput(out);
+  }
+  worker(node, inputs, outputs) {
+    outputs["num"] = node.data.num;
+  }
+}
+
+class ConditonComponent extends Rete.Component{
+  constructor() {
+    super( `Condition`);
+    this.data.component =Condition;
+  }
+  builder(node){
+    var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var out = new Rete.Output("num", "Next Step", numSocket);
+    {console.log(node)}
+    return node
+    .addInput(inp1)
+      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addOutput(out);
+  }
+  worker(node, inputs, outputs) {
+    outputs["num"] = node.data.num;
+  }
+
+
+}
 
 class AddComponent extends Rete.Component {
   constructor() {
     super("Start");
+    this.data.noContextMenu = true;
     this.data.component = MyNode; // optional
   }
 
@@ -107,10 +151,17 @@ class AddComponent extends Rete.Component {
 export async function createEditor(container) {
   var components = new AddComponent();
   var components2=new NumComponent();
+  var conditionComponent=new ConditonComponent();
+  var DelayComponent =new SmartDelayComponent();
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
   editor.use(ConnectionPlugin,);
   editor.use(ReactRenderPlugin, { createRoot });
-  editor.use(Context);
+
+  editor.use(ContextMenuPlugin,{
+    searchBar: false, // true by default 
+
+    
+  });
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
@@ -122,6 +173,8 @@ export async function createEditor(container) {
 
   editor.register(components);
   editor.register(components2);
+  editor.register(conditionComponent);
+  editor.register(DelayComponent);
   var add = await components.createNode();
   add.position = [500, 240];
 
@@ -186,6 +239,11 @@ export async function createEditor(container) {
   //   console.log(e.e);
 
   // });
+  editor.on('showcontextmenu', ({ e,node }) => {
+    console.log("mouseEvent of context menu-->",e);
+    console.log(node);
+    return !node;
+});
 
   editor.view.resize();
   editor.trigger("process");

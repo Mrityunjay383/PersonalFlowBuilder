@@ -19,10 +19,8 @@
     border: 1px soild #333 !important;
     height:12px !important;
     width:12px !important;
-  }
-  .socket .input {
-    margin-left: 0 !important;
-  }
+    margin-right: 0px !important;  
+}
   .connection .main-path{
     stroke: gray !important;
     /* fill: antiquewhite !important; */

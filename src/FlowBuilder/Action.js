@@ -8,10 +8,22 @@ export class Action extends Node {
 
     return (
       <div className={`node`} style={{ background: "white"}}>
-        <div className="title">
-        <img className="playIcon"src={playIcon}/> {node.name} 
-        </div>
-        {/* Outputs */}
+        
+  {/* Inputs */}
+  {inputs.map((input) => (
+          <div className="input" key={input.key}>
+            <div className="title">
+            <Socket
+              type="input"
+              socket={input.socket}
+              io={input}
+              innerRef={bindSocket}
+            />   
+            <img className="playIcon"src={playIcon}/> {node.name} 
+            </div>
+            
+          </div>
+        ))}
       
         {/* Controls */}
         {controls.map((control) => (
@@ -22,27 +34,7 @@ export class Action extends Node {
             innerRef={bindControl}
           />
         ))}
-        {/* Inputs */}
-        {inputs.map((input) => (
-          <div className="input" key={input.key}>
-            <Socket
-              type="input"
-              socket={input.socket}
-              io={input}
-              innerRef={bindSocket}
-            />
-            {!input.showControl() && (
-              <div className="input-title">{input.name}</div>
-            )}
-            {input.showControl() && (
-              <Control
-                className="input-control"
-                control={input.control}
-                innerRef={bindControl}
-              />
-            )}
-          </div>
-        ))}
+      
           {outputs.map((output) => (
           <div className="output" key={output.key}>
             <div className="output-title" style={{fontSize:"10px"}}> {output.name}</div>
