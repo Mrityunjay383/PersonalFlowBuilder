@@ -12,11 +12,8 @@ import { Action } from "./Action";
 import { Condition } from "./condition";
 import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
-<<<<<<< HEAD
 
-=======
 import { Selector } from "./selector";
->>>>>>> cd3d205638507290a3636fb56fbb9e1939fdf87c
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
