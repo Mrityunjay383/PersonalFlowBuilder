@@ -184,7 +184,9 @@ export async function createEditor(container) {
 
   editor.use(ContextMenuPlugin,{
     searchBar: false, // true by default
-
+    rename(component){
+      return `+${component.name}`
+    },
 
   });
   editor.use(ConnectionPathPlugin, {
@@ -243,11 +245,11 @@ export async function createEditor(container) {
 
   let x,y;
   editor.on("connectionpath", async (data) => {
-    console.log("connectionpath ", data);
+    // console.log("connectionpath ", data);
     [x, y] = [data.points[2], data.points[3]];
   })
   editor.on("connectiondrop", async (data1) => {
-    console.log("connectiondrop ", data1);
+    // console.log("connectiondrop ", data1);
 
 
     var newnode= await components2.createNode();
@@ -265,10 +267,10 @@ export async function createEditor(container) {
   //   console.log(e.e);
 
   // });
-  editor.on('showcontextmenu', ({ e,node }) => {
-    console.log("mouseEvent of context menu-->",e);
-    console.log(node);
-    return !node;
+  editor.on('contextmenu', (data) => {
+    console.log("mouseEvent of context menu-->",data);
+    // console.log(node);
+    // return true;
 });
 
   editor.view.resize();
