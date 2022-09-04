@@ -12,6 +12,7 @@ import { Action } from "./Action";
 import { Condition } from "./condition";
 import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
+import { Selector } from "./selector";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
@@ -57,6 +58,29 @@ class NumControl extends Rete.Control {
     this.update();
   }
 }
+class SelectorComponent extends Rete.Component{
+  constructor() {
+    super( `Selecter`);
+    this.data.component =Selector;
+  }
+
+
+  builder(node) {
+      var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var out = new Rete.Output("num", "Next Step", numSocket);
+    {console.log(node)}
+    return node
+    .addInput(inp1)
+      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addOutput(out);
+  }
+
+  worker(node, inputs, outputs) {
+    outputs["num"] = node.data.num;
+  }
+
+}
+
 
 class NumComponent extends Rete.Component {
   constructor() {
@@ -153,6 +177,7 @@ export async function createEditor(container) {
   var conditionComponent=new ConditonComponent();
   var DelayComponent =new SmartDelayComponent();
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
+  const selector=new SelectorComponent();
   editor.use(ConnectionPlugin,);
   editor.use(ReactRenderPlugin, { createRoot });
 
@@ -181,6 +206,7 @@ export async function createEditor(container) {
   editor.register(components2);
   editor.register(conditionComponent);
   editor.register(DelayComponent);
+  editor.register(selector);
   var add = await components.createNode();
   add.position = [500, 240];
 
