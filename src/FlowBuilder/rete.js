@@ -14,6 +14,7 @@ import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
 
 import { Selector } from "./selector";
+import { publish } from "./events";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
@@ -255,9 +256,7 @@ export async function createEditor(container) {
 let pointerEvent;
 let  view=editor.view;
 editor.on("click",async(e)=>{
-  console.log(e.e);
-  pointerEvent=e;
-
+  publish("say-hello");
 });
   editor.on("connectiondrop", async (data1) => {
     // console.log("connectiondrop ", data1);
