@@ -185,8 +185,12 @@ export async function createEditor(container) {
   editor.use(ContextMenuPlugin,{
     searchBar: false, // true by default
     rename(component){
-      return `+${component.name}`
+      console.log(component);
+      if(component.name!="Start"){
+        return `+${component.name}`;
+      }
     },
+    // vueComponent:Selector,
 
   });
   editor.use(ConnectionPathPlugin, {
@@ -248,30 +252,36 @@ export async function createEditor(container) {
     // console.log("connectionpath ", data);
     [x, y] = [data.points[2], data.points[3]];
   })
+let pointerEvent;
+let  view=editor.view;
+editor.on("click",async(e)=>{
+  console.log(e.e);
+  pointerEvent=e;
+
+});
   editor.on("connectiondrop", async (data1) => {
     // console.log("connectiondrop ", data1);
+    editor.trigger("contextmenu",{pointerEvent,view});
+    // var newnode= await components2.createNode();
+    // newnode.position = [x, y];
+    //   console.log("newnode -->",newnode);
+    //   const connections={input:add,output:newnode};
+    //   editor.addNode(newnode);
+    //  editor.connect(data1,newnode.inputs.get("num1"));
 
+    // await engine.abort();
 
-    var newnode= await components2.createNode();
-    newnode.position = [x, y];
-      console.log("newnode -->",newnode);
-      const connections={input:add,output:newnode};
-      editor.addNode(newnode);
-     editor.connect(data1,newnode.inputs.get("num1"));
-
-    await engine.abort();
-
-    await engine.process(editor.toJSON());
+    // await engine.process(editor.toJSON());
   })
-  // editor.on("click",async(e,container)=>{
-  //   console.log(e.e);
 
-  // });
-  editor.on('contextmenu', (data) => {
-    console.log("mouseEvent of context menu-->",data);
+ 
+  editor.on('contextmenu', ({e,view}) => {
+    console.log("mouseEvent of context menu-->" ,e,view);
+
     // console.log(node);
     // return true;
 });
+
 
   editor.view.resize();
   editor.trigger("process");
@@ -288,8 +298,9 @@ export function useRete() {
     if (container) {
       createEditor(container).then((value) => {
         console.log("created");
+        console.log("current value of editerRef",editorRef.current);
         editorRef.current = value;
-        console.log(value);
+        console.log("this is editerref==>:",value);
       });
     }
   }, [container]);

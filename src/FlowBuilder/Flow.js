@@ -21,10 +21,15 @@ function Editor() {
 }
 
 function FLow() {
-    return (
-        <div>
-          <Editor/>
-        </div>
+
+    return ({
+        hello : ()=>{
+          console.log("hello");
+        },
+        render:()=>{
+          return <Editor/>
+        }
+      }
     )
 }
 
