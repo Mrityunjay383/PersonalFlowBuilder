@@ -1,8 +1,9 @@
 import React from 'react'
 import { useRete } from "./rete.js";
 
-function Editor() {
-  const [setContainer] = useRete();
+function Editor({data}) {
+
+  const [setContainer] = useRete(data);
   return (
     <>
     <div
@@ -20,14 +21,18 @@ function Editor() {
   );
 }
 
-function FLow() {
+function FLow(props) {
 
     return ({
-        hello : ()=>{
+        hello : function(){
           console.log("hello");
         },
-        render:()=>{
-          return <Editor/>
+        render:function(){
+          return <Editor  data={props} />
+        },
+        on:function(eventName, listener){ 
+            document.addEventListener(eventName, listener);
+     
         }
       }
     )

@@ -38,7 +38,6 @@ export class Action extends Node {
           {outputs.map((output) => (
           <div className="output" key={output.key}>
             <div className="output-title" style={{fontSize:"10px"}}> {output.name}</div>
-            {console.log(output.socket)}
             <Socket
               type="output"
               socket={output.socket}
