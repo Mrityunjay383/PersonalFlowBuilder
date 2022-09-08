@@ -14,7 +14,7 @@ import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
 
 import { Selector } from "./selector";
-import { publish } from "./events";
+import { publish, subscribe } from "./events";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
@@ -40,7 +40,6 @@ class NumControl extends Rete.Control {
     this.emitter = emitter;
     this.key = key;
     this.component = NumControl.component;
-    console.log("this is control ",node)
     const initial = node.data[key] || 0;
 
     node.data[key] = initial;
@@ -94,7 +93,6 @@ class NumComponent extends Rete.Component {
   builder(node) {
       var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
-    {console.log(node)}
     return node
     .addInput(inp1)
       .addControl(new NumControl(this.editor, "preview", node, true))
@@ -222,7 +220,14 @@ export async function createEditor(container,data) {
   // set up the intial passed nodes  with custom ids
    
   for (let node in nodes) {
-    var createNode=await components2.createNode();
+    let createNode;
+    if(nodes[node].parentNodeId==""){
+      createNode= await components.createNode();
+    }
+    else{
+     createNode =await components2.createNode();
+    }
+   
     createNode.position=[nodes[node].meta.x,nodes[node].meta.y]
     editor.addNode(createNode);
     let editorData= editor.toJSON();
@@ -231,37 +236,28 @@ export async function createEditor(container,data) {
         await editor.fromJSON(editorData);
         await engine.abort()
         await engine.process(editor.toJSON());
-      
-      console.log("data--> changd--->",editor.toJSON())
   }
 
- // making helper obj for making connections based on custom data
- let helperObj={};
- let editorData= editor.toJSON();
- for (let idNo in editorData.nodes) {
-  helperObj[idNo]=editorData.nodes[idNo];
-}
-console.log("this is the helper obj-->",helperObj);
+//  // making helper obj for making connections based on custom data
+//  let helperObj={};
+//  let editorData= editor.toJSON();
+//  for (let idNo in editorData.nodes) {
+//   helperObj[idNo]=editorData.nodes[idNo];
+// }
 // making custom connections 
 
 for (let node in nodes) {
- if(nodes[node].parentNodeId==""){
- console.log("orphan node h ye iski id h --> ",node);
- } 
-  else{
+  if(nodes[node].parentNodeId!=""){
     let editorData=editor.toJSON();
     const nid=nodes[node].nodeId;
     const pid=nodes[node].parentNodeId;
     // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
     editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
     editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
-    console.log(editorData.nodes[nid]);
-    console.log(editorData.nodes[pid]); 
+
     await editor.fromJSON(editorData);
     await engine.abort()
     await engine.process(editor.toJSON());
-    console.log(editor.toJSON());
-    console.log("custom connect with id ",nid,pid);
   }
 }
 
@@ -270,18 +266,15 @@ for (let node in nodes) {
   editor.on(
     "process nodecreated noderemoved connectioncreated connectionremoved",
     async () => {
-      console.log("process");
-      console.log(editor.toJSON())
       await engine.abort();
 
       await engine.process(editor.toJSON());
       console.log("editor-->",editor)
     }
   );
-  editor.on("updateconnection",async( el, connection, points)=>{
-    console.log(el,connection,points);
-
-  });
+  // editor.on("updateconnection",async( el, connection, points)=>{
+  //   console.log(el,connection,points);
+  // });
   editor.on("connectioncreate",async(connection)=>{
       console.log("this is connection==>",connection);
   });
@@ -307,6 +300,9 @@ let pointerEvent;
 let  view=editor.view;
 editor.on("click",async(e)=>{
   publish("any click");
+  console.log('====================================');
+  console.log(editor.toJSON());
+  console.log('====================================');
 });
   // editor.on("connectiondrop", async (data1) => {
   //   console.log("connectiondrop ", data1);
@@ -326,6 +322,79 @@ editor.on("click",async(e)=>{
   editor.on('contextmenu', ({e,view}) => {
     console.log("mouseEvent of context menu-->" ,e,view);
 });
+
+///customisation event driven programming =====.......
+
+
+// event of add node 
+subscribe("add node",async({detail})=>{
+  console.log("data inside the add node-->",detail);
+  var newnode= await components2.createNode();
+  newnode.position = [100 ,0];
+  editor.addNode(newnode);
+  let editorD= editor.toJSON();
+ editorD.nodes[1].id=detail.nodeId; 
+ 
+  await editor.fromJSON(editorD);  
+  await engine.abort()
+  await engine.process(editor.toJSON());
+  let editorData=editor.toJSON();
+  if(detail.parentNodeId!=""){
+    const nid=detail.nodeId;
+    const pid=detail.parentNodeId;
+    editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
+    editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
+   }
+   await editor.fromJSON(editorData);  
+   console.log("after update==>",editor.toJSON());
+   await engine.abort()
+   await engine.process(editor.toJSON());
+
+})
+// event to remove node BFS traversal 
+subscribe("delete node",async({detail})=>{
+    let editorData=editor.toJSON();
+    let queue=[];
+    queue.push(detail);
+    let pnode=editorData.nodes[detail].inputs.num1.connections;
+    let pid;
+    let pconnections=[];
+    if(pnode.length>0){
+      pid=pnode[0].node;
+      pconnections = [...pconnections,...editorData.nodes[pnode[0].node].outputs.num.connections];
+    }
+    while(queue.length>0){
+      let n=queue[0];
+      queue.splice(0,1);
+      let connections=editorData.nodes[n].outputs.num.connections;
+      delete editorData.nodes[n];
+      connections.forEach((c)=>{
+        queue.push(c.node);
+      })  
+    }
+    console.log("parent connection --->",pconnections);
+    pconnections=pconnections.filter((c)=> c.node!=detail);
+      console.log('====================================');
+      console.log("pconnections after filtering the wroong one",pconnections);
+      console.log('====================================');
+      
+      pconnections.forEach((c)=>{
+        console.log("after delete -->",c.node);
+        editorData.nodes[c.node].inputs.num1.connections.push({node:pid,output:'num',data:{}});
+        editorData.nodes[pid].outputs.num.connections.push({node:c.node,input:'num1',data:{}});
+    })
+    console.log("parent connection after update --->",pconnections);
+
+   
+ 
+    // editor.removeNode(todeletNode);
+    await editor.fromJSON(editorData);  
+    await engine.abort();
+    await engine.process(editor.toJSON());
+   console.log("after update==>",editor.toJSON());
+ 
+
+})
 
 
   editor.view.resize();

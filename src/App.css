@@ -32,6 +32,10 @@
     width:12px !important;
     margin-right: 0px !important;  
 }
+.socket .input{
+background-color: #FCB340 !important;
+}
+
   .connection .main-path{
     stroke: #8492A6 !important;
     /* fill: antiquewhite !important; */
