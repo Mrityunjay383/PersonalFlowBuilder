@@ -152,7 +152,6 @@ class AddComponent extends Rete.Component {
 
   builder(node) {
   var out = new Rete.Output("num", "The First Step", numSocket);
-    {console.log(node)}
     return node
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
@@ -269,7 +268,6 @@ for (let node in nodes) {
       await engine.abort();
 
       await engine.process(editor.toJSON());
-      console.log("editor-->",editor)
     }
   );
   // editor.on("updateconnection",async( el, connection, points)=>{
@@ -322,6 +320,20 @@ editor.on("click",async(e)=>{
   editor.on('contextmenu', ({e,view}) => {
     console.log("mouseEvent of context menu-->" ,e,view);
 });
+editor.on("zoom",(data)=>{
+  console.log('====================================');
+  console.log("zooooom",data);
+  console.log('====================================');
+     });
+     editor.on("nodetranslate",(data)=>{
+      console.log('====================================');
+      console.log("nodetranslate	",data);
+      console.log('====================================');
+              });
+  editor.on("selectnode",(data)=>{
+  publish("node.click",data);// call node.click     
+         });
+        
 
 ///customisation event driven programming =====.......
 
@@ -338,6 +350,9 @@ subscribe("add node",async({detail})=>{
   await editor.fromJSON(editorD);  
   await engine.abort()
   await engine.process(editor.toJSON());
+  // ========
+  publish("node.added",editorD.nodes[1]);// publishing for subscribed event node.added
+  //==========
   let editorData=editor.toJSON();
   if(detail.parentNodeId!=""){
     const nid=detail.nodeId;
@@ -354,6 +369,7 @@ subscribe("add node",async({detail})=>{
 // event to remove node BFS traversal 
 subscribe("delete node",async({detail})=>{
     let editorData=editor.toJSON();
+    let todeletNode=editorData.nodes[detail];
     let queue=[];
     queue.push(detail);
     let pnode=editorData.nodes[detail].inputs.num1.connections;
@@ -372,6 +388,9 @@ subscribe("delete node",async({detail})=>{
         queue.push(c.node);
       })  
     }
+      // ========
+  publish("node.removed",todeletNode);// publishing for subscribed event node.removed
+  //==========
     console.log("parent connection --->",pconnections);
     pconnections=pconnections.filter((c)=> c.node!=detail);
       console.log('====================================');
@@ -380,12 +399,14 @@ subscribe("delete node",async({detail})=>{
       
       pconnections.forEach((c)=>{
         console.log("after delete -->",c.node);
+        // maybe will try by checking if need is there to push or duplicacy is present 
         editorData.nodes[c.node].inputs.num1.connections.push({node:pid,output:'num',data:{}});
         editorData.nodes[pid].outputs.num.connections.push({node:c.node,input:'num1',data:{}});
+
     })
     console.log("parent connection after update --->",pconnections);
 
-   
+  
  
     // editor.removeNode(todeletNode);
     await editor.fromJSON(editorData);  

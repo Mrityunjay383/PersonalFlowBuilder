@@ -7,10 +7,26 @@ import FLow from "./FlowBuilder/Flow";
 
 function App() {
   let flowRef = useRef(FLow());
-  let flowmanager = flowRef.current;
+  let flowManager = flowRef.current;
+// Events customised 
 
-  flowmanager.on("any click", () => {
+  flowManager.on("any click", () => {
     console.log("say-hello");
+  });
+  flowManager.on("node.click", ({ detail}) => {
+    let event, node, options;
+    event=detail.e;// pointer event 
+    node=detail.node;// value of node which is selected
+    options=detail.accumulate // boolean value 
+    console.log('====================================');
+    console.log("node.click is triggered on",{event:event,node:node,options:options});
+    console.log('====================================');  
+  });
+  flowManager.on("node.added", ({detail}) =>{
+    console.log("nodes is addeed====>",detail);
+  } );
+  flowManager.on("node.removed", ({detail}) => {
+    console.log("node is removed===>",detail);
   });
 
   const node = {
@@ -33,7 +49,7 @@ function App() {
       <button
         type="button"
         onClick={() => {
-          flowmanager.nodes.add(node);
+          flowManager.nodes.add(node);
         }}
       >
         add node
@@ -41,7 +57,7 @@ function App() {
       <button
         type="button"
         onClick={() => {
-          flowmanager.nodes.remove("node-3");
+          flowManager.nodes.remove("node-3");
         }}
       >
         delete node
