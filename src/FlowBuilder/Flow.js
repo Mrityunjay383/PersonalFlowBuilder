@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { publish } from "./events.js";
 import { useRete } from "./rete.js";
 
-function Editor({ data, newnode }) {
-  console.log("this is new node data--->", newnode);
+function Editor({ data}) {
   const [setContainer] = useRete(data);
   return (
     <>
@@ -22,9 +21,6 @@ function Editor({ data, newnode }) {
 function FLow(props) {
   const [newnode, setnewnode] = useState(null);
   return {
-    hello: function () {
-      console.log("hello");
-    },
     render: function () {
       return <Editor data={props} />;
     },

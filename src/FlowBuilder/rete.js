@@ -199,12 +199,18 @@ export async function createEditor(container,data) {
 
   });
   editor.use(ConnectionPathPlugin, {
+    
     options: { vertical: false, curvature: 0.4 },
     arrow: {
-      color: "red",
+      color: data.theme.fill,
       marker: 'M-5,-10 L-5,10 L20,0 z'
     }
    });
+   let obj=document.querySelectorAll("path");
+   console.log('====================================');
+   console.log("this is slected bye js class obj",obj);
+   console.log('====================================');
+   //  obj.style.stroke=data.theme.fill;
   var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
@@ -377,7 +383,7 @@ subscribe("delete node",async({detail})=>{
     let pconnections=[];
     if(pnode.length>0){
       pid=pnode[0].node;
-      pconnections = [...pconnections,...editorData.nodes[pnode[0].node].outputs.num.connections];
+      pconnections = [...pconnections,...editorData.nodes[pid].outputs.num.connections];
     }
     while(queue.length>0){
       let n=queue[0];
@@ -386,7 +392,8 @@ subscribe("delete node",async({detail})=>{
       delete editorData.nodes[n];
       connections.forEach((c)=>{
         queue.push(c.node);
-      })  
+      })
+
     }
       // ========
   publish("node.removed",todeletNode);// publishing for subscribed event node.removed
@@ -401,9 +408,8 @@ subscribe("delete node",async({detail})=>{
         console.log("after delete -->",c.node);
         // maybe will try by checking if need is there to push or duplicacy is present 
         editorData.nodes[c.node].inputs.num1.connections.push({node:pid,output:'num',data:{}});
-        editorData.nodes[pid].outputs.num.connections.push({node:c.node,input:'num1',data:{}});
-
     })
+    editorData.nodes[pid].outputs.num.connections=pconnections;
     console.log("parent connection after update --->",pconnections);
 
   

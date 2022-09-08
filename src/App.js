@@ -63,7 +63,15 @@ function App() {
         delete node
       </button>
       <FLow
-        data="hello"
+        
+        theme={{
+          whitespaceAroundNode: 75,
+          arrow: {
+            fill: "#000000",
+            stroke: "none",
+            strokeWidth: 0,
+          }
+        } }
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
           position: { x: 1, y: 1, zoom: 1 },
