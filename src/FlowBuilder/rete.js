@@ -6,6 +6,7 @@ import ConnectionPlugin from "rete-connection-plugin";
 import ConnectionPathPlugin from 'rete-connection-path-plugin';
 import AreaPlugin from "rete-area-plugin";
 import Context from "efficy-rete-context-menu-plugin";
+import AutoArrangePlugin from "rete-auto-arrange-plugin";
 import ContextMenuPlugin, { Menu, Item, Search } from 'rete-context-menu-plugin';
 import { MyNode } from "./MyNode";
 import { Action } from "./Action";
@@ -14,7 +15,7 @@ import { extend } from "@vue/shared";
 import { SmartDelay } from "./SmartDelay";
 
 import { Selector } from "./selector";
-import { publish, subscribe } from "./events";
+import { publish, subscribe, subscribeDReturn } from "./events";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket('Any type');
 numSocket.combineWith(anyTypeSocket);
@@ -198,6 +199,7 @@ export async function createEditor(container,data) {
     // vueComponent:Selector,
 
   });
+  console.log(ConnectionPathPlugin);
   editor.use(ConnectionPathPlugin, {
     
     options: { vertical: false, curvature: 0.4 },
@@ -206,7 +208,9 @@ export async function createEditor(container,data) {
       marker: 'M-5,-10 L-5,10 L20,0 z'
     }
    });
-   editor.use(AreaPlugin);
+
+
+editor.use(AutoArrangePlugin, { margin: {x: 50, y: 50 }, depth: 100 });
    let obj=document.querySelectorAll("path");
    console.log('====================================');
    console.log("this is slected bye js class obj",obj);
@@ -332,6 +336,9 @@ editor.on("zoom",(data)=>{
   console.log("zooooom",data);
   console.log('====================================');
      });
+     editor.on("translate",(data)=>{
+      publish("position.changed",data);
+     })
      editor.on("nodetranslate",(data)=>{
       console.log('====================================');
       console.log("nodetranslate	",data);
@@ -340,8 +347,10 @@ editor.on("zoom",(data)=>{
   editor.on("selectnode",(data)=>{
   publish("node.click",data);// call node.click     
          });
-        
-
+        // when window gets loaded 
+         window.addEventListener("load", (d) => {
+          publish("loaded",d);
+       });
 ///customisation event driven programming =====.......
 
 
@@ -352,14 +361,12 @@ subscribe("add node",async({detail})=>{
   newnode.position = [100 ,0];
   editor.addNode(newnode);
   let editorD= editor.toJSON();
+  
  editorD.nodes[1].id=detail.nodeId; 
  
   await editor.fromJSON(editorD);  
   await engine.abort()
   await engine.process(editor.toJSON());
-  // ========
-  publish("node.added",editorD.nodes[1]);// publishing for subscribed event node.added
-  //==========
   let editorData=editor.toJSON();
   if(detail.parentNodeId!=""){
     const nid=detail.nodeId;
@@ -371,6 +378,10 @@ subscribe("add node",async({detail})=>{
    console.log("after update==>",editor.toJSON());
    await engine.abort()
    await engine.process(editor.toJSON());
+  // ========
+  publish("node.added",editorD.nodes[1]);// publishing for subscribed event node.added
+  //==========
+  
 
 })
 // event to remove node BFS traversal 
@@ -396,9 +407,7 @@ subscribe("delete node",async({detail})=>{
       })
 
     }
-      // ========
-  publish("node.removed",todeletNode);// publishing for subscribed event node.removed
-  //==========
+   
     console.log("parent connection --->",pconnections);
     pconnections=pconnections.filter((c)=> c.node!=detail);
       console.log('====================================');
@@ -414,11 +423,14 @@ subscribe("delete node",async({detail})=>{
     console.log("parent connection after update --->",pconnections);
 
   
- 
+  
     // editor.removeNode(todeletNode);
     await editor.fromJSON(editorData);  
     await engine.abort();
     await engine.process(editor.toJSON());
+       // ========
+  publish("node.removed",todeletNode);// publishing for subscribed event node.removed
+  //==========
    console.log("after update==>",editor.toJSON());
  
 
@@ -437,14 +449,20 @@ subscribe("setPosition",async({detail})=>{
 })
 let posx,posy,zoom;
 let flag=0;
-subscribe("getPosition",async()=>{
+  subscribeDReturn("getPosition","catchPosition",async()=>{
   const {area}=editor.view;
    posx=area.transform.x;
    posy=area.transform.y;
    zoom=area.transform.k;
    console.log(posx,posy,zoom);
-// publish("catchPosition",{x:posx,y:posy,zoom});
+   return "hello";
+  //  if(1){
+  //   await publish("catchPosition",{x:posx,y:posy,zoom});
+  //  }
+
   })
+
+
   subscribe("positionReset",()=>{
     const {area}=editor.view;
      console.log(area.container.parentElement)
@@ -457,13 +475,67 @@ subscribe("getPosition",async()=>{
     area.update()
     console.log("position is reset now ")
   })
-
+    subscribe("nodesPositionReset",()=>{
+      editor.trigger('arrange', { node:editor.nodes[0] });
+    })
+    subscribe("resetEverything",async()=>{
+        let data=editor.toJSON();
+        data.nodes={};
+       await editor.fromJSON(data);
+       await engine.abort();
+       await engine.process(editor.toJSON());
+        for (let node in nodes) {
+          let createNode;
+          id_no=1;
+          if(nodes[node].parentNodeId==""){
+            createNode= await components.createNode();
+          }
+          else{
+           createNode =await components2.createNode();
+          }
+         
+          createNode.position=[nodes[node].meta.x,nodes[node].meta.y]
+          editor.addNode(createNode);
+          let editorData= editor.toJSON();
+          console.log(editorData);
+               editorData.nodes[id_no].id=nodes[node].nodeId ;
+               incId(id_no);
+              await editor.fromJSON(editorData);
+              await engine.abort()
+              await engine.process(editor.toJSON());
+        }
+      
+      //  // making helper obj for making connections based on custom data
+      //  let helperObj={};
+      //  let editorData= editor.toJSON();
+      //  for (let idNo in editorData.nodes) {
+      //   helperObj[idNo]=editorData.nodes[idNo];
+      // }
+      // making custom connections 
+      
+      for (let node in nodes) {
+        if(nodes[node].parentNodeId!=""){
+          let editorData=editor.toJSON();
+          const nid=nodes[node].nodeId;
+          const pid=nodes[node].parentNodeId;
+          // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
+          editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
+          editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
+      
+          await editor.fromJSON(editorData);
+          await engine.abort()
+          await engine.process(editor.toJSON());
+        }
+      }
+      
+    })
 
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
 
   console.log(editor);
+
   return editor;
 }
 

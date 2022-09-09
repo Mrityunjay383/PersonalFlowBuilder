@@ -28,8 +28,16 @@ function App() {
   flowManager.on("node.removed", ({detail}) => {
     console.log("node is removed===>",detail);
   });
+  flowManager.on("loaded",({detail})=>{
+    console.log('====================================');
+    console.log("document is fully loaded ",detail);
+    console.log('====================================');
+  })
+  flowManager.on("position.changed",({detail})=>{
+    console.log("canvas position is changed");
+  })
 
-  const node = {
+  const node1 = {
     nodeId: "node-4",
     type: "email",
     options: {},
@@ -41,6 +49,7 @@ function App() {
       y: 100,
     },
   };
+  
 
   return (
     <div className="App">
@@ -48,8 +57,9 @@ function App() {
       <hr />
       <button
         type="button"
-        onClick={() => {
-          flowManager.nodes.add(node);
+        onClick={async () => {
+          flowManager.nodes.add(node1);
+        
         }}
       >
         add node
@@ -73,8 +83,8 @@ function App() {
       <button
         type="button"
         onClick={async() => {
-           flowManager.position.getPosition(); // return  x, y, zoom
-         
+         let d= await flowManager.position.getPosition(); // return  x, y, zoom
+         console.log("here u go --->",d);
         }}
       >
       getPosition
@@ -88,6 +98,23 @@ function App() {
       >
       position Reset 
       </button>
+      <button
+        type="button"
+        onClick={() => {
+          flowManager.nodes.reset();
+        }}
+      >
+        auto arrange
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+        flowManager.reset() // reload the page 
+
+        }}
+      >
+        Reset    
+          </button>
       <FLow
         
         theme={{
