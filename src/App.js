@@ -34,9 +34,29 @@ function App() {
     console.log('====================================');
   })
   flowManager.on("position.changed",({detail})=>{
-    console.log("canvas position is changed");
+    console.log("canvas position is changed",detail);
   })
-
+  flowManager.on("node.mouse.over", ({ detail }) => {
+    console.log("mouse over")
+  });
+    flowManager.on("node.mouse.out", ({ detail }) => {
+      console.log("mouse out");
+    });
+    flowManager.on("node.mouse.down", ({ detail }) =>{
+      console.log("mouse down");
+    });
+    flowManager.on("node.mouse.up", ({ detail}) => {
+      console.log("mouse up")
+    });
+    flowManager.on("node.position_changed", ({ detail }) => {
+      console.log("node position changed-->",detail);
+    }); 
+    flowManager.on("node.drag.start",({detail})=>{
+      console.log("node drag start",detail);
+    })
+    flowManager.on("node.drag.end",({detail})=>{
+      console.log("node drag end",detail);
+    })
   const node1 = {
     nodeId: "node-4",
     type: "email",

@@ -36,7 +36,7 @@ function FLow(props) {
         
         let x,y,zoom;
        
-        publishedReturn("getPosition");
+        publish("getPosition");
         subscribe("catchPosition",async ({detail})=>{
           x=detail.x;
           y=detail.y;

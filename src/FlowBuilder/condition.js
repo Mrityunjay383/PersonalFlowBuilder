@@ -1,5 +1,6 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
+import { publish } from "./events";
 import playIcon from "./images/playIcon.svg";
 export class Condition extends Node {
   render() {
@@ -7,7 +8,23 @@ export class Condition extends Node {
     const { outputs, controls, inputs, selected } = this.state;
 
     return (
-      <div className={`node`} style={{ background: "#FDFDFD"}}>
+      <div draggable
+      onMouseDown={(e)=>{
+        publish("node.mouse.down",e)}} 
+         onMouseOver={(e)=>{
+          publish("node.mouse.over",e)}}
+          onMouseOut={(e)=>{
+            publish("node.mouse.out",e)}}
+            onMouseUp={(e)=>{
+              publish("node.mouse.up",e)}}
+          onDragStart={(d)=>{
+            publish("node.drag.start",d);
+          }}
+          onDragEnd={(d)=>{
+           
+            publish("node.drag.end",d);
+          }}
+      className={`node`} style={{ background: "#FDFDFD"}}>
         
   {/* Inputs */}
   {inputs.map((input) => (

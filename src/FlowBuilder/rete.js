@@ -3,11 +3,15 @@ import Rete from "rete";
 import { createRoot } from "react-dom/client";
 import ReactRenderPlugin from "rete-react-render-plugin";
 import ConnectionPlugin from "rete-connection-plugin";
-import ConnectionPathPlugin from 'rete-connection-path-plugin';
+import ConnectionPathPlugin from "rete-connection-path-plugin";
 import AreaPlugin from "rete-area-plugin";
 import Context from "efficy-rete-context-menu-plugin";
 import AutoArrangePlugin from "rete-auto-arrange-plugin";
-import ContextMenuPlugin, { Menu, Item, Search } from 'rete-context-menu-plugin';
+import ContextMenuPlugin, {
+  Menu,
+  Item,
+  Search,
+} from "rete-context-menu-plugin";
 import { MyNode } from "./MyNode";
 import { Action } from "./Action";
 import { Condition } from "./condition";
@@ -17,9 +21,8 @@ import { SmartDelay } from "./SmartDelay";
 import { Selector } from "./selector";
 import { publish, subscribe, subscribeDReturn } from "./events";
 var numSocket = new Rete.Socket("Number value");
-const anyTypeSocket = new Rete.Socket('Any type');
+const anyTypeSocket = new Rete.Socket("Any type");
 numSocket.combineWith(anyTypeSocket);
-
 
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
@@ -30,8 +33,8 @@ class NumControl extends Rete.Control {
         ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
       }}
       onClick={(e) => {
-        onChange(value+1)
-        console.log(value)
+        onChange(value + 1);
+        console.log(value);
       }}
     />
   );
@@ -50,7 +53,7 @@ class NumControl extends Rete.Control {
       onChange: (v) => {
         this.setValue(v);
         this.emitter.trigger("process");
-      }
+      },
     };
   }
 
@@ -60,19 +63,20 @@ class NumControl extends Rete.Control {
     this.update();
   }
 }
-class SelectorComponent extends Rete.Component{
+class SelectorComponent extends Rete.Component {
   constructor() {
-    super( `Selecter`);
-    this.data.component =Selector;
+    super(`Selecter`);
+    this.data.component = Selector;
   }
 
-
   builder(node) {
-      var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
-    {console.log(node)}
+    {
+      console.log(node);
+    }
     return node
-    .addInput(inp1)
+      .addInput(inp1)
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
@@ -80,22 +84,19 @@ class SelectorComponent extends Rete.Component{
   worker(node, inputs, outputs) {
     outputs["num"] = node.data.num;
   }
-
 }
-
 
 class NumComponent extends Rete.Component {
   constructor(name) {
     super(name);
-    this.data.component =Action
+    this.data.component = Action;
   }
-
 
   builder(node) {
-      var inp1 = new Rete.Input("num1", "Number", numSocket);
+    var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
     return node
-    .addInput(inp1)
+      .addInput(inp1)
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
@@ -104,17 +105,19 @@ class NumComponent extends Rete.Component {
     outputs["num"] = node.data.num;
   }
 }
-class  SmartDelayComponent extends Rete.Component{
+class SmartDelayComponent extends Rete.Component {
   constructor() {
-    super( `Smart Delay`);
-    this.data.component =SmartDelay;
+    super(`Smart Delay`);
+    this.data.component = SmartDelay;
   }
-  builder(node){
+  builder(node) {
     var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
-    {console.log(node)}
+    {
+      console.log(node);
+    }
     return node
-    .addInput(inp1)
+      .addInput(inp1)
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
@@ -123,25 +126,25 @@ class  SmartDelayComponent extends Rete.Component{
   }
 }
 
-class ConditonComponent extends Rete.Component{
+class ConditonComponent extends Rete.Component {
   constructor() {
-    super( `Condition`);
-    this.data.component =Condition;
+    super(`Condition`);
+    this.data.component = Condition;
   }
-  builder(node){
+  builder(node) {
     var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
-    {console.log(node)}
+    {
+      console.log(node);
+    }
     return node
-    .addInput(inp1)
+      .addInput(inp1)
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
   worker(node, inputs, outputs) {
     outputs["num"] = node.data.num;
   }
-
-
 }
 
 class AddComponent extends Rete.Component {
@@ -152,7 +155,7 @@ class AddComponent extends Rete.Component {
   }
 
   builder(node) {
-  var out = new Rete.Output("num", "The First Step", numSocket);
+    var out = new Rete.Output("num", "The First Step", numSocket);
     return node
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
@@ -170,52 +173,49 @@ class AddComponent extends Rete.Component {
     outputs["num"] = sum;
   }
 }
-let id_no=1;
-function incId(id_no){
+let id_no = 1;
+function incId(id_no) {
   id_no++;
 }
 
-export async function createEditor(container,data) {
-  console.log("inside the create editor==>",data);
-  let nodes=data.options.nodes;
+export async function createEditor(container, data) {
+  console.log("inside the create editor==>", data);
+  let nodes = data.options.nodes;
   console.log(nodes);
   var components = new AddComponent("start");
-  var components2=new NumComponent("node");
-  var conditionComponent=new ConditonComponent();
-  var DelayComponent =new SmartDelayComponent();
+  var components2 = new NumComponent("node");
+  var conditionComponent = new ConditonComponent();
+  var DelayComponent = new SmartDelayComponent();
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
-  const selector=new SelectorComponent();
-  editor.use(ConnectionPlugin,);
-  editor.use(ReactRenderPlugin, { createRoot } );
+  const selector = new SelectorComponent();
+  editor.use(ConnectionPlugin);
+  editor.use(ReactRenderPlugin, { createRoot });
 
-  editor.use(ContextMenuPlugin,{
+  editor.use(ContextMenuPlugin, {
     searchBar: false, // true by default
-    rename(component){
+    rename(component) {
       console.log(component);
-      if(component.name!="Start"){
+      if (component.name != "Start") {
         return `+${component.name}`;
       }
     },
     // vueComponent:Selector,
-
   });
   console.log(ConnectionPathPlugin);
   editor.use(ConnectionPathPlugin, {
-    
     options: { vertical: false, curvature: 0.4 },
     arrow: {
       color: data.theme.fill,
-      marker: 'M-5,-10 L-5,10 L20,0 z'
-    }
-   });
+      marker: "M-5,-10 L-5,10 L20,0 z",
+    },
+  });
 
-
-editor.use(AutoArrangePlugin, { margin: {x: 50, y: 50 }, depth: 100 });
-   let obj=document.querySelectorAll("path");
-   console.log('====================================');
-   console.log("this is slected bye js class obj",obj);
-   console.log('====================================');
-   //  obj.style.stroke=data.theme.fill;
+  editor.use(AutoArrangePlugin, { margin: { x: 50, y: 50 }, depth: 100 });
+  let obj = document.querySelectorAll("path");
+  console.log("====================================");
+  console.log("this is slected bye js class obj", obj);
+  console.log("====================================");
+  //  obj.style.stroke=data.theme.fill;
   var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
@@ -223,56 +223,62 @@ editor.use(AutoArrangePlugin, { margin: {x: 50, y: 50 }, depth: 100 });
   editor.register(conditionComponent);
   editor.register(DelayComponent);
   editor.register(selector);
+
   // var add = await components.createNode();
   // // add.position = [500, 240];
 
   // editor.addNode(add);
   // set up the intial passed nodes  with custom ids
-   
+
   for (let node in nodes) {
     let createNode;
-    if(nodes[node].parentNodeId==""){
-      createNode= await components.createNode();
+    if (nodes[node].parentNodeId == "") {
+      createNode = await components.createNode();
+    } else {
+      createNode = await components2.createNode();
     }
-    else{
-     createNode =await components2.createNode();
-    }
-   
-    createNode.position=[nodes[node].meta.x,nodes[node].meta.y]
+
+    createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
     editor.addNode(createNode);
-    let editorData= editor.toJSON();
-         editorData.nodes[id_no].id=nodes[node].nodeId ;
-         incId(id_no);
-        await editor.fromJSON(editorData);
-        await engine.abort()
-        await engine.process(editor.toJSON());
-  }
-
-//  // making helper obj for making connections based on custom data
-//  let helperObj={};
-//  let editorData= editor.toJSON();
-//  for (let idNo in editorData.nodes) {
-//   helperObj[idNo]=editorData.nodes[idNo];
-// }
-// making custom connections 
-
-for (let node in nodes) {
-  if(nodes[node].parentNodeId!=""){
-    let editorData=editor.toJSON();
-    const nid=nodes[node].nodeId;
-    const pid=nodes[node].parentNodeId;
-    // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
-    editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
-    editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
-
+    let editorData = editor.toJSON();
+    editorData.nodes[id_no].id = nodes[node].nodeId;
+    incId(id_no);
     await editor.fromJSON(editorData);
-    await engine.abort()
+    await engine.abort();
     await engine.process(editor.toJSON());
   }
-}
 
+  //  // making helper obj for making connections based on custom data
+  //  let helperObj={};
+  //  let editorData= editor.toJSON();
+  //  for (let idNo in editorData.nodes) {
+  //   helperObj[idNo]=editorData.nodes[idNo];
+  // }
+  // making custom connections
 
-  
+  for (let node in nodes) {
+    if (nodes[node].parentNodeId != "") {
+      let editorData = editor.toJSON();
+      const nid = nodes[node].nodeId;
+      const pid = nodes[node].parentNodeId;
+      // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
+      editorData.nodes[nid].inputs.num1.connections.push({
+        node: pid,
+        output: "num",
+        data: {},
+      });
+      editorData.nodes[pid].outputs.num.connections.push({
+        node: nid,
+        input: "num1",
+        data: {},
+      });
+
+      await editor.fromJSON(editorData);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+    }
+  }
+
   editor.on(
     "process nodecreated noderemoved connectioncreated connectionremoved",
     async () => {
@@ -284,8 +290,8 @@ for (let node in nodes) {
   // editor.on("updateconnection",async( el, connection, points)=>{
   //   console.log(el,connection,points);
   // });
-  editor.on("connectioncreate",async(connection)=>{
-      console.log("this is connection==>",connection);
+  editor.on("connectioncreate", async (connection) => {
+    console.log("this is connection==>", connection);
   });
   // editor.on("keydown", async(keyEvent)=>{
   //     if(keyEvent.key=="Enter"){
@@ -300,25 +306,25 @@ for (let node in nodes) {
   //     }
   // });
 
-  let x,y;
+  let x, y;
   editor.on("connectionpath", async (data) => {
     // console.log("connectionpath ", data);
     [x, y] = [data.points[2], data.points[3]];
-  })
-let pointerEvent;
-let  view=editor.view;
-editor.on("click",async(e)=>{
-  publish("any click");
-  console.log('====================================');
-  console.log(editor.toJSON());
-  console.log('====================================');
-});
+  });
+  let pointerEvent;
+  let view = editor.view;
+  editor.on("click", async (e) => {
+    publish("any click");
+    console.log("====================================");
+    console.log(editor.toJSON());
+    console.log("====================================");
+  });
   // editor.on("connectiondrop", async (data1) => {
   //   console.log("connectiondrop ", data1);
   //   var newnode= await components2.createNode();
   //   newnode.position = [x, y];
   //     console.log("newnode -->",newnode);
-     
+
   //     editor.addNode(newnode);
   //    editor.connect(data1,newnode.inputs.get("num1"));
 
@@ -327,208 +333,231 @@ editor.on("click",async(e)=>{
   //   await engine.process(editor.toJSON());
   // })
 
- 
-  editor.on('contextmenu', ({e,view}) => {
-    console.log("mouseEvent of context menu-->" ,e,view);
-});
-editor.on("zoom",(data)=>{
-  console.log('====================================');
-  console.log("zooooom",data);
-  console.log('====================================');
-     });
-     editor.on("translate",(data)=>{
-      publish("position.changed",data);
-     })
-     editor.on("nodetranslate",(data)=>{
-      console.log('====================================');
-      console.log("nodetranslate	",data);
-      console.log('====================================');
-              });
-  editor.on("selectnode",(data)=>{
-  publish("node.click",data);// call node.click     
-         });
-        // when window gets loaded 
-         window.addEventListener("load", (d) => {
-          publish("loaded",d);
-       });
-///customisation event driven programming =====.......
-
-
-// event of add node 
-subscribe("add node",async({detail})=>{
-  console.log("data inside the add node-->",detail);
-  var newnode= await components2.createNode();
-  newnode.position = [100 ,0];
-  editor.addNode(newnode);
-  let editorD= editor.toJSON();
-  
- editorD.nodes[1].id=detail.nodeId; 
- 
-  await editor.fromJSON(editorD);  
-  await engine.abort()
-  await engine.process(editor.toJSON());
-  let editorData=editor.toJSON();
-  if(detail.parentNodeId!=""){
-    const nid=detail.nodeId;
-    const pid=detail.parentNodeId;
-    editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
-    editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
-   }
-   await editor.fromJSON(editorData);  
-   console.log("after update==>",editor.toJSON());
-   await engine.abort()
-   await engine.process(editor.toJSON());
-  // ========
-  publish("node.added",editorD.nodes[1]);// publishing for subscribed event node.added
-  //==========
-  
-
-})
-// event to remove node BFS traversal 
-subscribe("delete node",async({detail})=>{
-    let editorData=editor.toJSON();
-    let todeletNode=editorData.nodes[detail];
-    let queue=[];
-    queue.push(detail);
-    let pnode=editorData.nodes[detail].inputs.num1.connections;
-    let pid;
-    let pconnections=[];
-    if(pnode.length>0){
-      pid=pnode[0].node;
-      pconnections = [...pconnections,...editorData.nodes[pid].outputs.num.connections];
+  editor.on("contextmenu", ({ e, view }) => {
+    console.log("mouseEvent of context menu-->", e, view);
+  });
+  editor.on("zoom", (data) => {
+    console.log("====================================");
+    console.log("zooooom", data);
+    console.log("====================================");
+  });
+  editor.on("translate", (data) => {
+    publish("position.changed", data);
+  });
+  let run = 0;
+  editor.on("nodetranslate", (data) => {
+    if (run == 0) {
+      publish("node.drag.start", data);
+      run++;
+    } else {
+      publish("node.position_changed", data);
     }
-    while(queue.length>0){
-      let n=queue[0];
-      queue.splice(0,1);
-      let connections=editorData.nodes[n].outputs.num.connections;
-      delete editorData.nodes[n];
-      connections.forEach((c)=>{
-        queue.push(c.node);
-      })
-
-    }
-   
-    console.log("parent connection --->",pconnections);
-    pconnections=pconnections.filter((c)=> c.node!=detail);
-      console.log('====================================');
-      console.log("pconnections after filtering the wroong one",pconnections);
-      console.log('====================================');
-      
-      pconnections.forEach((c)=>{
-        console.log("after delete -->",c.node);
-        // maybe will try by checking if need is there to push or duplicacy is present 
-        editorData.nodes[c.node].inputs.num1.connections.push({node:pid,output:'num',data:{}});
-    })
-    editorData.nodes[pid].outputs.num.connections=pconnections;
-    console.log("parent connection after update --->",pconnections);
-
-  
-  
-    // editor.removeNode(todeletNode);
-    await editor.fromJSON(editorData);  
-    await engine.abort();
-    await engine.process(editor.toJSON());
-       // ========
-  publish("node.removed",todeletNode);// publishing for subscribed event node.removed
-  //==========
-   console.log("after update==>",editor.toJSON());
- 
-
-})
-
-// to setPosition of canva
-subscribe("setPosition",async({detail})=>{
- let  x=detail.x;
-  let y=detail.y;
-  let k=detail.zoom;
-  const {area}=editor.view;
-  area.transform.x=x;
-  area.transform.y=y;
-  area.transform.k=k;
-  area.update()
-})
-let posx,posy,zoom;
-let flag=0;
-  subscribeDReturn("getPosition","catchPosition",async()=>{
-  const {area}=editor.view;
-   posx=area.transform.x;
-   posy=area.transform.y;
-   zoom=area.transform.k;
-   console.log(posx,posy,zoom);
-   return "hello";
-  //  if(1){
-  //   await publish("catchPosition",{x:posx,y:posy,zoom});
-  //  }
+  });
+  editor.on("nodedraged", (data) => {
+    run = 0;
+    publish("node.drag.end",data);
+  });
+  editor.on("selectnode", (data) => {
+    publish("node.click", data); // call node.click
+  });
+  // when window gets loaded
+  window.addEventListener("load", (d) => {
+    publish("loaded", d);
+  });
+  editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
+console.log('====================================');
+console.log(el);
+console.log('====================================');
 
   })
+  ///customisation event driven programming =====.......
 
+  // event of add node
+  subscribe("add node", async ({ detail }) => {
+    console.log("data inside the add node-->", detail);
+    var newnode = await components2.createNode();
+    newnode.position = [100, 0];
+    editor.addNode(newnode);
+    let editorD = editor.toJSON();
 
-  subscribe("positionReset",()=>{
-    const {area}=editor.view;
-     console.log(area.container.parentElement)
-     console.log(area.container);
-    AreaPlugin.zoomAt(editor,editor.nodes)
+    editorD.nodes[1].id = detail.nodeId;
+
+    await editor.fromJSON(editorD);
+    await engine.abort();
+    await engine.process(editor.toJSON());
+    let editorData = editor.toJSON();
+    if (detail.parentNodeId != "") {
+      const nid = detail.nodeId;
+      const pid = detail.parentNodeId;
+      editorData.nodes[nid].inputs.num1.connections.push({
+        node: pid,
+        output: "num",
+        data: {},
+      });
+      editorData.nodes[pid].outputs.num.connections.push({
+        node: nid,
+        input: "num1",
+        data: {},
+      });
+    }
+    await editor.fromJSON(editorData);
+    console.log("after update==>", editor.toJSON());
+    await engine.abort();
+    await engine.process(editor.toJSON());
+    // ========
+    publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
+    //==========
+  });
+  // event to remove node BFS traversal
+  subscribe("delete node", async ({ detail }) => {
+    let editorData = editor.toJSON();
+    let todeletNode = editorData.nodes[detail];
+    let queue = [];
+    queue.push(detail);
+    let pnode = editorData.nodes[detail].inputs.num1.connections;
+    let pid;
+    let pconnections = [];
+    if (pnode.length > 0) {
+      pid = pnode[0].node;
+      pconnections = [
+        ...pconnections,
+        ...editorData.nodes[pid].outputs.num.connections,
+      ];
+    }
+    while (queue.length > 0) {
+      let n = queue[0];
+      queue.splice(0, 1);
+      let connections = editorData.nodes[n].outputs.num.connections;
+      delete editorData.nodes[n];
+      connections.forEach((c) => {
+        queue.push(c.node);
+      });
+    }
+
+    console.log("parent connection --->", pconnections);
+    pconnections = pconnections.filter((c) => c.node != detail);
+    console.log("====================================");
+    console.log("pconnections after filtering the wroong one", pconnections);
+    console.log("====================================");
+
+    pconnections.forEach((c) => {
+      console.log("after delete -->", c.node);
+      // maybe will try by checking if need is there to push or duplicacy is present
+      editorData.nodes[c.node].inputs.num1.connections.push({
+        node: pid,
+        output: "num",
+        data: {},
+      });
+    });
+    editorData.nodes[pid].outputs.num.connections = pconnections;
+    console.log("parent connection after update --->", pconnections);
+
+    // editor.removeNode(todeletNode);
+    await editor.fromJSON(editorData);
+    await engine.abort();
+    await engine.process(editor.toJSON());
+    // ========
+    publish("node.removed", todeletNode); // publishing for subscribed event node.removed
+    //==========
+    console.log("after update==>", editor.toJSON());
+  });
+
+  // to setPosition of canva
+  subscribe("setPosition", async ({ detail }) => {
+    let x = detail.x;
+    let y = detail.y;
+    let k = detail.zoom;
+    const { area } = editor.view;
+    area.transform.x = x;
+    area.transform.y = y;
+    area.transform.k = k;
+    area.update();
+  });
+  let posx, posy, zoom;
+  let flag = 0;
+  subscribe("getPosition", async () => {
+    const { area } = editor.view;
+    posx = area.transform.x;
+    posy = area.transform.y;
+    zoom = area.transform.k;
+    console.log(posx, posy, zoom);
+    publish("catchPosition", { x: posx, y: posy, zoom });
+    //  if(1){
+    //   await
+    //  }
+  });
+
+  subscribe("positionReset", () => {
+    const { area } = editor.view;
+    console.log(area.container.parentElement);
+    console.log(area.container);
+    AreaPlugin.zoomAt(editor, editor.nodes);
     console.log(AreaPlugin);
     // area.transform.x=area.container.;
     // area.transform.y=area.container.;
-    area.transform.k=1;
-    area.update()
-    console.log("position is reset now ")
-  })
-    subscribe("nodesPositionReset",()=>{
-      editor.trigger('arrange', { node:editor.nodes[0] });
-    })
-    subscribe("resetEverything",async()=>{
-        let data=editor.toJSON();
-        data.nodes={};
-       await editor.fromJSON(data);
-       await engine.abort();
-       await engine.process(editor.toJSON());
-        for (let node in nodes) {
-          let createNode;
-          id_no=1;
-          if(nodes[node].parentNodeId==""){
-            createNode= await components.createNode();
-          }
-          else{
-           createNode =await components2.createNode();
-          }
-         
-          createNode.position=[nodes[node].meta.x,nodes[node].meta.y]
-          editor.addNode(createNode);
-          let editorData= editor.toJSON();
-          console.log(editorData);
-               editorData.nodes[id_no].id=nodes[node].nodeId ;
-               incId(id_no);
-              await editor.fromJSON(editorData);
-              await engine.abort()
-              await engine.process(editor.toJSON());
-        }
-      
-      //  // making helper obj for making connections based on custom data
-      //  let helperObj={};
-      //  let editorData= editor.toJSON();
-      //  for (let idNo in editorData.nodes) {
-      //   helperObj[idNo]=editorData.nodes[idNo];
-      // }
-      // making custom connections 
-      
-      for (let node in nodes) {
-        if(nodes[node].parentNodeId!=""){
-          let editorData=editor.toJSON();
-          const nid=nodes[node].nodeId;
-          const pid=nodes[node].parentNodeId;
-          // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
-          editorData.nodes[nid].inputs.num1.connections.push({node:pid,output:'num',data:{}});
-          editorData.nodes[pid].outputs.num.connections.push({node:nid,input:'num1',data:{}});
-      
-          await editor.fromJSON(editorData);
-          await engine.abort()
-          await engine.process(editor.toJSON());
-        }
+    area.transform.k = 1;
+    area.update();
+    console.log("position is reset now ");
+  });
+  subscribe("nodesPositionReset", () => {
+    editor.trigger("arrange", { node: editor.nodes[0] });
+  });
+  subscribe("resetEverything", async () => {
+    let data = editor.toJSON();
+    data.nodes = {};
+    await editor.fromJSON(data);
+    await engine.abort();
+    await engine.process(editor.toJSON());
+    for (let node in nodes) {
+      let createNode;
+      id_no = 1;
+      if (nodes[node].parentNodeId == "") {
+        createNode = await components.createNode();
+      } else {
+        createNode = await components2.createNode();
       }
-      
-    })
+
+      createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
+      createNode.id = nodes[node].nodeId;
+      editor.addNode(createNode);
+      let editorData = editor.toJSON();
+      console.log(editorData);
+      await editor.fromJSON(editorData);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+    }
+
+    //  // making helper obj for making connections based on custom data
+    //  let helperObj={};
+    //  let editorData= editor.toJSON();
+    //  for (let idNo in editorData.nodes) {
+    //   helperObj[idNo]=editorData.nodes[idNo];
+    // }
+    // making custom connections
+
+    for (let node in nodes) {
+      if (nodes[node].parentNodeId != "") {
+        let editorData = editor.toJSON();
+        const nid = nodes[node].nodeId;
+        const pid = nodes[node].parentNodeId;
+        // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
+        editorData.nodes[nid].inputs.num1.connections.push({
+          node: pid,
+          output: "num",
+          data: {},
+        });
+        editorData.nodes[pid].outputs.num.connections.push({
+          node: nid,
+          input: "num1",
+          data: {},
+        });
+
+        await editor.fromJSON(editorData);
+        await engine.abort();
+        await engine.process(editor.toJSON());
+      }
+    }
+  });
 
   editor.view.resize();
   editor.trigger("process");
@@ -545,9 +574,8 @@ export function useRete(data) {
 
   useEffect(() => {
     if (container) {
-      createEditor(container,data).then((value) => {
+      createEditor(container, data).then((value) => {
         editorRef.current = value;
-        
       });
     }
   }, [container]);

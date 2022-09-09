@@ -1,13 +1,31 @@
 import React from "react";
 import { Node, Socket, Control } from "rete-react-render-plugin";
 import playIcon from "./images/playIcon.svg";
+import { publish } from "./events";
 export class SmartDelay extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
     const { outputs, controls, inputs, selected } = this.state;
 
     return (
-      <div className={`node`} style={{ background: "#FDFDFD"}}>
+      <div
+      draggable
+      onMouseDown={(e)=>{
+        publish("node.mouse.down",e)}} 
+         onMouseOver={(e)=>{
+          publish("node.mouse.over",e)}}
+          onMouseOut={(e)=>{
+            publish("node.mouse.out",e)}}
+            onMouseUp={(e)=>{
+              publish("node.mouse.up",e)}}
+          onDragStart={(d)=>{
+            publish("node.drag.start",d);
+          }}
+          onDragEnd={(d)=>{
+           
+            publish("node.drag.end",d);
+          }}
+      className={`node`} style={{ background: "#FDFDFD"}}>
         
   {/* Inputs */}
   {inputs.map((input) => (
