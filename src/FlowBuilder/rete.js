@@ -447,7 +447,10 @@ subscribe("getPosition",async()=>{
   })
   subscribe("positionReset",()=>{
     const {area}=editor.view;
-    console.log(area.container);
+     console.log(area.container.parentElement)
+     console.log(area.container);
+    AreaPlugin.zoomAt(editor,editor.nodes)
+    console.log(AreaPlugin);
     // area.transform.x=area.container.;
     // area.transform.y=area.container.;
     area.transform.k=1;
