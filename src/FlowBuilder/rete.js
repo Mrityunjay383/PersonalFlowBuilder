@@ -206,6 +206,7 @@ export async function createEditor(container,data) {
       marker: 'M-5,-10 L-5,10 L20,0 z'
     }
    });
+   editor.use(AreaPlugin);
    let obj=document.querySelectorAll("path");
    console.log('====================================');
    console.log("this is slected bye js class obj",obj);
@@ -423,10 +424,42 @@ subscribe("delete node",async({detail})=>{
 
 })
 
+// to setPosition of canva
+subscribe("setPosition",async({detail})=>{
+ let  x=detail.x;
+  let y=detail.y;
+  let k=detail.zoom;
+  const {area}=editor.view;
+  area.transform.x=x;
+  area.transform.y=y;
+  area.transform.k=k;
+  area.update()
+})
+let posx,posy,zoom;
+let flag=0;
+subscribe("getPosition",async()=>{
+  const {area}=editor.view;
+   posx=area.transform.x;
+   posy=area.transform.y;
+   zoom=area.transform.k;
+   console.log(posx,posy,zoom);
+// publish("catchPosition",{x:posx,y:posy,zoom});
+  })
+  subscribe("positionReset",()=>{
+    const {area}=editor.view;
+    console.log(area.container);
+    // area.transform.x=area.container.;
+    // area.transform.y=area.container.;
+    area.transform.k=1;
+    area.update()
+    console.log("position is reset now ")
+  })
+
 
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
+
   console.log(editor);
   return editor;
 }

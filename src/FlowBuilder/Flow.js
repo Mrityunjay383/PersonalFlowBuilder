@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { publish } from "./events.js";
+import { publish, subscribe } from "./events.js";
 import { useRete } from "./rete.js";
 
 function Editor({ data}) {
@@ -23,6 +23,28 @@ function FLow(props) {
   return {
     render: function () {
       return <Editor data={props} />;
+    },
+    position:{
+      setPosition:function(x,y,zoom){
+        console.log("setposition called",x,y,zoom);
+        publish("setPosition",{x,y,zoom});
+      },
+      getPosition:  function(){
+        
+        let x,y,zoom;
+        publish("getPosition");
+        
+        // subscribe("catchPosition",({detail})=>{
+        //   x=detail.x;
+        //   y=detail.y;
+        //   zoom=detail.zoom;
+        //   console.log("this is inside of catchPosition==>",detail);
+        // })
+        // return {x,y,zoom};
+      },
+      reset:function(){
+        publish("positionReset");
+      }
     },
     nodes: {
       add: function (node) {

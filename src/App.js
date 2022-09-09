@@ -62,6 +62,32 @@ function App() {
       >
         delete node
       </button>
+      <button
+        type="button"
+        onClick={() => {
+          flowManager.position.setPosition(100,100,2); // x, y, zoom 
+        }}
+      >
+        setPosition
+      </button>
+      <button
+        type="button"
+        onClick={async() => {
+           flowManager.position.getPosition(); // return  x, y, zoom
+         
+        }}
+      >
+      getPosition
+      </button>
+      <button
+        type="button"
+        onClick={async() => {
+          flowManager.position.reset();
+         
+        }}
+      >
+      position Reset 
+      </button>
       <FLow
         
         theme={{
