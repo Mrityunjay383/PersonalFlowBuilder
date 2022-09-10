@@ -140,11 +140,25 @@ function App() {
         theme={{
           whitespaceAroundNode: 75,
           arrow: {
+            fill: "green",
+            stroke: "none",
+            strokeWidth: "3px",
+          }
+        } }
+        
+        renderArrow={({ fromNodeId, toNodeId }) => {
+          return {
             fill: "#000000",
             stroke: "none",
             strokeWidth: 0,
-          }
-        } }
+          };
+        }}
+        render={({ node, options }) => {
+          // node - node which is rendering here
+          // options - full current options object
+          // render may have some option inputs.
+          return <div>{JSON.stringify({ node, options })}</div>;
+        }}
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
           position: { x: 1, y: 1, zoom: 1 },

@@ -205,9 +205,17 @@ export async function createEditor(container, data) {
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
-      color: data.theme.fill,
+      color: data.theme.arrow.fill,
       marker: "M-5,-10 L-5,10 L20,0 z",
     },
+  });
+  editor.on("renderconnection", ({ el, connection, points }) => {
+    el.getElementsByClassName("main-path")[0].setAttribute(
+      "style",
+      `stroke:${data.theme.arrow.fill} !important;fill:${data.theme.arrow.stroke} !important;
+      stroke-width:${data.theme.arrow.strokeWidth} !important; `
+    );
+    console.log("rendered ==>", el);
   });
 
   editor.use(AutoArrangePlugin, { margin: { x: 50, y: 50 }, depth: 100 });
@@ -287,8 +295,8 @@ export async function createEditor(container, data) {
       await engine.process(editor.toJSON());
     }
   );
-  // editor.on("updateconnection",async( el, connection, points)=>{
-  //   console.log(el,connection,points);
+  // editor.on("updateconnection", async (el, connection, points) => {
+  //   console.log(el, connection, points);
   // });
   editor.on("connectioncreate", async (connection) => {
     console.log("this is connection==>", connection);
@@ -307,10 +315,10 @@ export async function createEditor(container, data) {
   // });
 
   let x, y;
-  editor.on("connectionpath", async (data) => {
-    // console.log("connectionpath ", data);
-    [x, y] = [data.points[2], data.points[3]];
-  });
+  // editor.on("connectionpath", async (data) => {
+  //   console.log("connectionpath ", data);
+  //   [x, y] = [data.points[2], data.points[3]];
+  // });
   let pointerEvent;
   let view = editor.view;
   editor.on("click", async (e) => {
@@ -355,7 +363,7 @@ export async function createEditor(container, data) {
   });
   editor.on("nodedraged", (data) => {
     run = 0;
-    publish("node.drag.end",data);
+    publish("node.drag.end", data);
   });
   editor.on("selectnode", (data) => {
     publish("node.click", data); // call node.click
@@ -364,12 +372,13 @@ export async function createEditor(container, data) {
   window.addEventListener("load", (d) => {
     publish("loaded", d);
   });
-  editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
-console.log('====================================');
-console.log(el);
-console.log('====================================');
+  //   editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
+  // console.log('====================================');
+  // console.log(el);
+  // console.log('====================================');
 
-  })
+  //   })
+
   ///customisation event driven programming =====.......
 
   // event of add node
@@ -381,7 +390,6 @@ console.log('====================================');
     let editorD = editor.toJSON();
 
     editorD.nodes[1].id = detail.nodeId;
-
     await editor.fromJSON(editorD);
     await engine.abort();
     await engine.process(editor.toJSON());
@@ -400,6 +408,7 @@ console.log('====================================');
         data: {},
       });
     }
+
     await editor.fromJSON(editorData);
     console.log("after update==>", editor.toJSON());
     await engine.abort();
