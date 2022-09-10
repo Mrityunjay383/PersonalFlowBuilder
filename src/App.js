@@ -8,55 +8,59 @@ import FLow from "./FlowBuilder/Flow";
 function App() {
   let flowRef = useRef(FLow());
   let flowManager = flowRef.current;
-// Events customised 
+  // Events customised
 
   flowManager.on("any click", () => {
     console.log("say-hello");
   });
-  flowManager.on("node.click", ({ detail}) => {
+  flowManager.on("node.click", ({ detail }) => {
     let event, node, options;
-    event=detail.e;// pointer event 
-    node=detail.node;// value of node which is selected
-    options=detail.accumulate // boolean value 
-    console.log('====================================');
-    console.log("node.click is triggered on",{event:event,node:node,options:options});
-    console.log('====================================');  
+    event = detail.e; // pointer event
+    node = detail.node; // value of node which is selected
+    options = detail.accumulate; // boolean value
+    console.log("====================================");
+    console.log("node.click is triggered on", {
+      event: event,
+      node: node,
+      options: options,
+    });
+    console.log("====================================");
   });
-  flowManager.on("node.added", ({detail}) =>{
-    console.log("nodes is addeed====>",detail);
-  } );
-  flowManager.on("node.removed", ({detail}) => {
-    console.log("node is removed===>",detail);
+  flowManager.on("node.added", ({ detail }) => {
+    console.log("nodes is addeed====>", detail);
   });
-  flowManager.on("loaded",({detail})=>{
-    console.log('====================================');
-    console.log("document is fully loaded ",detail);
-    console.log('====================================');
-  })
-  flowManager.on("position.changed",({detail})=>{
-    console.log("canvas position is changed",detail);
-  })
+  flowManager.on("node.removed", ({ detail }) => {
+    console.log("node is removed===>", detail);
+  });
+  flowManager.on("loaded", ({ detail }) => {
+    console.log("====================================");
+    console.log("document is fully loaded ", detail);
+    console.log("====================================");
+  });
+  flowManager.on("position.changed", ({ detail }) => {
+    console.log("canvas position is changed", detail);
+  });
   flowManager.on("node.mouse.over", ({ detail }) => {
-    console.log("mouse over")
+    console.log("mouse over");
   });
-    flowManager.on("node.mouse.out", ({ detail }) => {
-      console.log("mouse out");
-    });
-    flowManager.on("node.mouse.down", ({ detail }) =>{
-      console.log("mouse down");
-    });
-    flowManager.on("node.mouse.up", ({ detail}) => {
-      console.log("mouse up")
-    });
-    flowManager.on("node.position_changed", ({ detail }) => {
-      console.log("node position changed-->",detail);
-    }); 
-    flowManager.on("node.drag.start",({detail})=>{
-      console.log("node drag start",detail);
-    })
-    flowManager.on("node.drag.end",({detail})=>{
-      console.log("node drag end",detail);
-    })
+  flowManager.on("node.mouse.out", ({ detail }) => {
+    console.log("mouse out");
+  });
+  flowManager.on("node.mouse.down", ({ detail }) => {
+    console.log("mouse down");
+  });
+  flowManager.on("node.mouse.up", ({ detail }) => {
+    console.log("mouse up");
+  });
+  flowManager.on("node.position_changed", ({ detail }) => {
+    console.log("node position changed-->", detail);
+  });
+  flowManager.on("node.drag.start", ({ detail }) => {
+    console.log("node drag start", detail);
+  });
+  flowManager.on("node.drag.end", ({ detail }) => {
+    console.log("node drag end", detail);
+  });
   const node1 = {
     nodeId: "node-4",
     type: "email",
@@ -69,7 +73,6 @@ function App() {
       y: 100,
     },
   };
-  
 
   return (
     <div className="App">
@@ -79,7 +82,6 @@ function App() {
         type="button"
         onClick={async () => {
           flowManager.nodes.add(node1);
-        
         }}
       >
         add node
@@ -95,28 +97,27 @@ function App() {
       <button
         type="button"
         onClick={() => {
-          flowManager.position.setPosition(100,100,2); // x, y, zoom 
+          flowManager.position.setPosition(100, 100, 2); // x, y, zoom
         }}
       >
         setPosition
       </button>
       <button
         type="button"
-        onClick={async() => {
-         let d= await flowManager.position.getPosition(); // return  x, y, zoom
-         console.log("here u go --->",d);
+        onClick={async () => {
+          let d = await flowManager.position.getPosition(); // return  x, y, zoom
+          console.log("here u go --->", d);
         }}
       >
-      getPosition
+        getPosition
       </button>
       <button
         type="button"
-        onClick={async() => {
+        onClick={async () => {
           flowManager.position.reset();
-         
         }}
       >
-      position Reset 
+        position Reset
       </button>
       <button
         type="button"
@@ -129,36 +130,39 @@ function App() {
       <button
         type="button"
         onClick={() => {
-        flowManager.reset() // reload the page 
-
+          flowManager.reset(); // reload the page
         }}
       >
-        Reset    
-          </button>
+        Reset
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          flowManager.renderArrow("node-1", "node-2", {
+            fill: "red",
+            stroke: "none",
+            strokeWidth: "2px",
+          }); // reload the page
+        }}
+      >
+        renderArrow
+      </button>
       <FLow
-        
         theme={{
           whitespaceAroundNode: 75,
           arrow: {
             fill: "green",
             stroke: "none",
             strokeWidth: "3px",
-          }
-        } }
-        
-        renderArrow={({ fromNodeId, toNodeId }) => {
-          return {
-            fill: "#000000",
-            stroke: "none",
-            strokeWidth: 0,
-          };
+          },
         }}
-        render={({ node, options }) => {
-          // node - node which is rendering here
-          // options - full current options object
-          // render may have some option inputs.
-          return <div>{JSON.stringify({ node, options })}</div>;
-        }}
+        // renderArrow={({ fromNodeId, toNodeId }) => {
+        //   return {
+        //     fill: "red",
+        //     stroke: "none",
+        //     strokeWidth: "2px",
+        //   };
+        // }}
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
           position: { x: 1, y: 1, zoom: 1 },

@@ -19,11 +19,15 @@ function Editor({ data}) {
 }
 
 function FLow(props) {
-  const [newnode, setnewnode] = useState(null);
+
   return {
     render: function () {
       return <Editor data={props} />;
     },
+    renderArrow: function(fromNodeId,toNodeId,data){
+      publish("renderArrow",{fromNodeId,toNodeId,data})
+    }
+    ,
     reset: function(){
       publish("resetEverything");
     },

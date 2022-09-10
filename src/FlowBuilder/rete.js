@@ -201,7 +201,6 @@ export async function createEditor(container, data) {
     },
     // vueComponent:Selector,
   });
-  console.log(ConnectionPathPlugin);
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
@@ -209,12 +208,68 @@ export async function createEditor(container, data) {
       marker: "M-5,-10 L-5,10 L20,0 z",
     },
   });
+  subscribe("renderArrow",({detail})=>{
+    let connections=editor.view.connections;
+    console.log(detail.fromNodeId,detail.toNodeId);
+    connections.forEach(connection=>{
+      let toNodeId, fromNodeId;
+      toNodeId=connection.connection.input.node.id;
+      fromNodeId=connection.connection.output.node.id;
+      let v;
+      console.log(fromNodeId,toNodeId);
+      console.log(connection.el);
+        
+      if(fromNodeId==detail.fromNodeId && toNodeId==detail.toNodeId){
+      v=detail.data;
+    
+     
+    
+      let {fill,stroke,strokeWidth}=v;
+     
+      connection.el.getElementsByClassName("main-path")[0].setAttribute(
+        "style",
+        `stroke:${fill} !important;fill:${stroke} !important;
+        stroke-width:${strokeWidth} !important; `
+      );
+      connection.el.getElementsByClassName("marker")[0].setAttribute(
+        "style",
+        ` fill:${fill} !important;`
+      );
+   
+    }
+    });
+
+  })
+  //    editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
+  // console.log('====================================');
+  // console.log(el);
+  // console.log('====================================');
+  //   })
   editor.on("renderconnection", ({ el, connection, points }) => {
+    let fromNodeId, toNodeId;
+    toNodeId=connection.input.node.id;
+    fromNodeId=connection.output.node.id;
+    console.log("form ",fromNodeId,"to",toNodeId);
+    let v;
+    // if(fromNodeId=="node-1" && toNodeId=="node-2"){
+    //   v=data.renderArrow({fromNodeId,toNodeId});
+    // }
+    
+    if(v){
+      let {fill,stroke,strokeWidth}=v;
+      el.getElementsByClassName("main-path")[0].setAttribute(
+        "style",
+        `stroke:${fill} !important;fill:${stroke} !important;
+        stroke-width:${strokeWidth} !important; `
+      );
+    }
+    else{
     el.getElementsByClassName("main-path")[0].setAttribute(
       "style",
       `stroke:${data.theme.arrow.fill} !important;fill:${data.theme.arrow.stroke} !important;
       stroke-width:${data.theme.arrow.strokeWidth} !important; `
     );
+  }
     console.log("rendered ==>", el);
   });
 
@@ -372,12 +427,7 @@ export async function createEditor(container, data) {
   window.addEventListener("load", (d) => {
     publish("loaded", d);
   });
-  //   editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
-  // console.log('====================================');
-  // console.log(el);
-  // console.log('====================================');
-
-  //   })
+ 
 
   ///customisation event driven programming =====.......
 
