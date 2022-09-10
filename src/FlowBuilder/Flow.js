@@ -17,6 +17,13 @@ function Editor({ data }) {
     </>
   );
 }
+let x, y, zoom;
+subscribe("catchPosition", async ({ detail }) => {
+  x = detail.x;
+  y = detail.y;
+  zoom = detail.zoom;
+  
+});
 
 function FLow(props) {
   return {
@@ -35,16 +42,10 @@ function FLow(props) {
         publish("setPosition", { x, y, zoom });
       },
       getPosition: async function () {
-        let x, y, zoom;
+        
 
         await publish("getPosition");
-        subscribe("catchPosition", async ({ detail }) => {
-          x = detail.x;
-          y = detail.y;
-          zoom = detail.zoom;
-          console.log("this is inside of catchPosition==>", detail);
-        });
-
+        
         return { x, y, zoom };
       },
       reset: function () {
