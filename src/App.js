@@ -8,8 +8,8 @@ import FLow from "./FlowBuilder/Flow";
 function App() {
   let flowRef = useRef(FLow());
   let flowManager = flowRef.current;
-  // Events customised
 
+  // Customised events
   flowManager.on("any click", () => {
     console.log("say-hello");
   });
