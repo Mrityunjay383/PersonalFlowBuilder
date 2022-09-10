@@ -459,13 +459,16 @@ export async function createEditor(container, data) {
       });
     }
 
+    
     await editor.fromJSON(editorData);
     console.log("after update==>", editor.toJSON());
     await engine.abort();
     await engine.process(editor.toJSON());
+    
     // ========
-    publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
+    await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
     //==========
+    await editor.trigger("arrange", { node: editor.nodes[0] }); 
   });
   // event to remove node BFS traversal
   subscribe("delete node", async ({ detail }) => {
