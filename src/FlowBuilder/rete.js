@@ -20,8 +20,7 @@ var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
 numSocket.combineWith(anyTypeSocket);
 
-
-// Nodes components class 
+// Nodes components class
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
     <input
@@ -32,7 +31,6 @@ class NumControl extends Rete.Control {
       }}
       onClick={(e) => {
         onChange(value + 1);
-        console.log(value);
       }}
     />
   );
@@ -62,7 +60,6 @@ class NumControl extends Rete.Control {
   }
 }
 
-
 class NumComponent extends Rete.Component {
   constructor(name) {
     super(name);
@@ -77,12 +74,7 @@ class NumComponent extends Rete.Component {
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
-
-  worker(node, inputs, outputs) {
-    outputs["num"] = node.data.num;
-  }
 }
-
 
 class AddComponent extends Rete.Component {
   constructor(name) {
@@ -97,29 +89,15 @@ class AddComponent extends Rete.Component {
       .addControl(new NumControl(this.editor, "preview", node, true))
       .addOutput(out);
   }
-
-  worker(node, inputs, outputs) {
-    var n1 = inputs["num1"].length ? inputs["num1"][0] : node.data.num1;
-    var n2 = inputs["num2"].length ? inputs["num2"][0] : node.data.num2;
-    var sum = n1 + n2;
-
-    this.editor.nodes
-      .find((n) => n.id === node.id)
-      .controls.get("preview")
-      .setValue(sum);
-    outputs["num"] = sum;
-  }
 }
 let id_no = 1;
 function incId(id_no) {
   id_no++;
 }
 
-// mainn function for all  functionalities of Module 
+// mainn function for all  functionalities of Module
 export async function createEditor(container, data) {
-  console.log("inside the create editor==>", data);
   let nodes = data.options.nodes;
-  console.log(nodes);
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
 
@@ -131,7 +109,6 @@ export async function createEditor(container, data) {
   editor.use(ContextMenuPlugin, {
     searchBar: false, // true by default
     rename(component) {
-      console.log(component);
       if (component.name != "Start") {
         return `+${component.name}`;
       }
@@ -146,83 +123,65 @@ export async function createEditor(container, data) {
   });
 
   // event called by method of renderArrow
-  subscribe("renderArrow",({detail})=>{
-    let connections=editor.view.connections;
-    console.log(detail.fromNodeId,detail.toNodeId);
-    connections.forEach(connection=>{
-      let toNodeId, fromNodeId;
-      toNodeId=connection.connection.input.node.id;
-      fromNodeId=connection.connection.output.node.id;
-      let v;
-      console.log(fromNodeId,toNodeId);
-      console.log(connection.el);
-        
-      if(fromNodeId==detail.fromNodeId && toNodeId==detail.toNodeId){
-      v=detail.data;
-    
-     
-    
-      let {fill,stroke,strokeWidth}=v;
-     
-      connection.el.getElementsByClassName("main-path")[0].setAttribute(
-        "style",
-        `stroke:${fill} !important;fill:${stroke} !important;
-        stroke-width:${strokeWidth} !important; `
-      );
-      connection.el.getElementsByClassName("marker")[0].setAttribute(
-        "style",
-        ` fill:${fill} !important;`
-      );
-   
-    }
-    });
+  subscribe("renderArrow", ({ detail }) => {
+    let connections = editor.view.connections;
 
-  })
-  //    editor.on("rendernode",async({ el, node, component, bindSocket, bindControl })=>{
-  // console.log('====================================');
-  // console.log(el);
-  // console.log('====================================');
-  //   })
+    connections.forEach((connection) => {
+      let toNodeId, fromNodeId;
+      toNodeId = connection.connection.input.node.id;
+      fromNodeId = connection.connection.output.node.id;
+      let v;
+
+      if (fromNodeId == detail.fromNodeId && toNodeId == detail.toNodeId) {
+        v = detail.data;
+
+        let { fill, stroke, strokeWidth } = v;
+
+        connection.el.getElementsByClassName("main-path")[0].setAttribute(
+          "style",
+          `stroke:${fill} !important;fill:${stroke} !important;
+        stroke-width:${strokeWidth} !important; `
+        );
+        connection.el
+          .getElementsByClassName("marker")[0]
+          .setAttribute("style", ` fill:${fill} !important;`);
+      }
+    });
+  });
+
   editor.on("renderconnection", ({ el, connection, points }) => {
     let fromNodeId, toNodeId;
-    toNodeId=connection.input.node.id;
-    fromNodeId=connection.output.node.id;
-    console.log("form ",fromNodeId,"to",toNodeId);
+    toNodeId = connection.input.node.id;
+    fromNodeId = connection.output.node.id;
+
     let v;
     // if(fromNodeId=="node-1" && toNodeId=="node-2"){
     //   v=data.renderArrow({fromNodeId,toNodeId});
     // }
-    
-    if(v){
-      let {fill,stroke,strokeWidth}=v;
+
+    if (v) {
+      let { fill, stroke, strokeWidth } = v;
       el.getElementsByClassName("main-path")[0].setAttribute(
         "style",
         `stroke:${fill} !important;fill:${stroke} !important;
         stroke-width:${strokeWidth} !important; `
       );
-    }
-    else{
-    el.getElementsByClassName("main-path")[0].setAttribute(
-      "style",
-      `stroke:${data.theme.arrow.fill} !important;fill:${data.theme.arrow.stroke} !important;
+    } else {
+      el.getElementsByClassName("main-path")[0].setAttribute(
+        "style",
+        `stroke:${data.theme.arrow.fill} !important;fill:${data.theme.arrow.stroke} !important;
       stroke-width:${data.theme.arrow.strokeWidth} !important; `
-    );
-  }
-    console.log("rendered ==>", el);
+      );
+    }
   });
 
   editor.use(AutoArrangePlugin, { margin: { x: 50, y: 50 }, depth: 100 });
   let obj = document.querySelectorAll("path");
-  console.log("====================================");
-  console.log("this is slected bye js class obj", obj);
-  console.log("====================================");
   //  obj.style.stroke=data.theme.fill;
   var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
   editor.register(components2);
-
-
 
   for (let node in nodes) {
     let createNode;
@@ -249,7 +208,7 @@ export async function createEditor(container, data) {
       let editorData = editor.toJSON();
       const nid = nodes[node].nodeId;
       const pid = nodes[node].parentNodeId;
-      
+
       editorData.nodes[nid].inputs.num1.connections.push({
         node: pid,
         output: "num",
@@ -275,22 +234,7 @@ export async function createEditor(container, data) {
       await engine.process(editor.toJSON());
     }
   );
- 
-  editor.on("connectioncreate", async (connection) => {
-    console.log("this is connection==>", connection);
-  });
 
-
-
-
-  editor.on("contextmenu", ({ e, view }) => {
-    console.log("mouseEvent of context menu-->", e, view);
-  });
-  editor.on("zoom", (data) => {
-    console.log("====================================");
-    console.log("zooooom", data);
-    console.log("====================================");
-  });
   editor.on("translate", (data) => {
     publish("position.changed", data);
   });
@@ -314,13 +258,11 @@ export async function createEditor(container, data) {
   window.addEventListener("load", (d) => {
     publish("loaded", d);
   });
- 
 
   ///customisation event driven programming =====.......
 
   // event of add node
   subscribe("add node", async ({ detail }) => {
-    console.log("data inside the add node-->", detail);
     var newnode = await components2.createNode();
     newnode.position = [100, 0];
     editor.addNode(newnode);
@@ -346,12 +288,10 @@ export async function createEditor(container, data) {
       });
     }
 
-    
     await editor.fromJSON(editorData);
-    console.log("after update==>", editor.toJSON());
     await engine.abort();
     await engine.process(editor.toJSON());
-    
+
     // ========
     await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
     //==========
@@ -384,14 +324,9 @@ export async function createEditor(container, data) {
       });
     }
 
-    console.log("parent connection --->", pconnections);
     pconnections = pconnections.filter((c) => c.node != detail);
-    console.log("====================================");
-    console.log("pconnections after filtering the wroong one", pconnections);
-    console.log("====================================");
 
     pconnections.forEach((c) => {
-      console.log("after delete -->", c.node);
       // maybe will try by checking if need is there to push or duplicacy is present
       editorData.nodes[c.node].inputs.num1.connections.push({
         node: pid,
@@ -400,7 +335,6 @@ export async function createEditor(container, data) {
       });
     });
     editorData.nodes[pid].outputs.num.connections = pconnections;
-    console.log("parent connection after update --->", pconnections);
 
     // editor.removeNode(todeletNode);
     await editor.fromJSON(editorData);
@@ -409,7 +343,6 @@ export async function createEditor(container, data) {
     // ========
     publish("node.removed", todeletNode); // publishing for subscribed event node.removed
     //==========
-    console.log("after update==>", editor.toJSON());
   });
 
   // to setPosition of canva
@@ -430,7 +363,6 @@ export async function createEditor(container, data) {
     posx = area.transform.x;
     posy = area.transform.y;
     zoom = area.transform.k;
-    console.log(posx, posy, zoom);
     publish("catchPosition", { x: posx, y: posy, zoom });
     //  if(1){
     //   await
@@ -439,15 +371,12 @@ export async function createEditor(container, data) {
 
   subscribe("positionReset", () => {
     const { area } = editor.view;
-    console.log(area.container.parentElement);
-    console.log(area.container);
     AreaPlugin.zoomAt(editor, editor.nodes);
-    console.log(AreaPlugin);
+
     // area.transform.x=area.container.;
     // area.transform.y=area.container.;
     area.transform.k = 1;
     area.update();
-    console.log("position is reset now ");
   });
   subscribe("nodesPositionReset", () => {
     editor.trigger("arrange", { node: editor.nodes[0] });
@@ -471,7 +400,7 @@ export async function createEditor(container, data) {
       createNode.id = nodes[node].nodeId;
       editor.addNode(createNode);
       let editorData = editor.toJSON();
-      console.log(editorData);
+
       await editor.fromJSON(editorData);
       await engine.abort();
       await engine.process(editor.toJSON());
@@ -512,8 +441,6 @@ export async function createEditor(container, data) {
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
-
-  console.log(editor);
 
   return editor;
 }
