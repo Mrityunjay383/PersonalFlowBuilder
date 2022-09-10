@@ -12,18 +12,16 @@ import ContextMenuPlugin, {
   Item,
   Search,
 } from "rete-context-menu-plugin";
-import { MyNode } from "./MyNode";
-import { Action } from "./Action";
-import { Condition } from "./condition";
-import { extend } from "@vue/shared";
-import { SmartDelay } from "./SmartDelay";
+import { MyNode } from "./Start";
+import { Action } from "./Node";
 
-import { Selector } from "./selector";
 import { publish, subscribe, subscribeDReturn } from "./events";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
 numSocket.combineWith(anyTypeSocket);
 
+
+// Nodes components class 
 class NumControl extends Rete.Control {
   static component = ({ value, onChange }) => (
     <input
@@ -63,28 +61,7 @@ class NumControl extends Rete.Control {
     this.update();
   }
 }
-class SelectorComponent extends Rete.Component {
-  constructor() {
-    super(`Selecter`);
-    this.data.component = Selector;
-  }
 
-  builder(node) {
-    var inp1 = new Rete.Input("num1", "Number", numSocket);
-    var out = new Rete.Output("num", "Next Step", numSocket);
-    {
-      console.log(node);
-    }
-    return node
-      .addInput(inp1)
-      .addControl(new NumControl(this.editor, "preview", node, true))
-      .addOutput(out);
-  }
-
-  worker(node, inputs, outputs) {
-    outputs["num"] = node.data.num;
-  }
-}
 
 class NumComponent extends Rete.Component {
   constructor(name) {
@@ -105,47 +82,7 @@ class NumComponent extends Rete.Component {
     outputs["num"] = node.data.num;
   }
 }
-class SmartDelayComponent extends Rete.Component {
-  constructor() {
-    super(`Smart Delay`);
-    this.data.component = SmartDelay;
-  }
-  builder(node) {
-    var inp1 = new Rete.Input("num1", "Number", numSocket);
-    var out = new Rete.Output("num", "Next Step", numSocket);
-    {
-      console.log(node);
-    }
-    return node
-      .addInput(inp1)
-      .addControl(new NumControl(this.editor, "preview", node, true))
-      .addOutput(out);
-  }
-  worker(node, inputs, outputs) {
-    outputs["num"] = node.data.num;
-  }
-}
 
-class ConditonComponent extends Rete.Component {
-  constructor() {
-    super(`Condition`);
-    this.data.component = Condition;
-  }
-  builder(node) {
-    var inp1 = new Rete.Input("num1", "Number", numSocket);
-    var out = new Rete.Output("num", "Next Step", numSocket);
-    {
-      console.log(node);
-    }
-    return node
-      .addInput(inp1)
-      .addControl(new NumControl(this.editor, "preview", node, true))
-      .addOutput(out);
-  }
-  worker(node, inputs, outputs) {
-    outputs["num"] = node.data.num;
-  }
-}
 
 class AddComponent extends Rete.Component {
   constructor(name) {
@@ -178,16 +115,16 @@ function incId(id_no) {
   id_no++;
 }
 
+// mainn function for all  functionalities of Module 
 export async function createEditor(container, data) {
   console.log("inside the create editor==>", data);
   let nodes = data.options.nodes;
   console.log(nodes);
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
-  var conditionComponent = new ConditonComponent();
-  var DelayComponent = new SmartDelayComponent();
+
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
-  const selector = new SelectorComponent();
+
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, { createRoot });
 
@@ -199,7 +136,6 @@ export async function createEditor(container, data) {
         return `+${component.name}`;
       }
     },
-    // vueComponent:Selector,
   });
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
@@ -208,6 +144,8 @@ export async function createEditor(container, data) {
       marker: "M-5,-10 L-5,10 L20,0 z",
     },
   });
+
+  // event called by method of renderArrow
   subscribe("renderArrow",({detail})=>{
     let connections=editor.view.connections;
     console.log(detail.fromNodeId,detail.toNodeId);
@@ -283,15 +221,8 @@ export async function createEditor(container, data) {
 
   editor.register(components);
   editor.register(components2);
-  editor.register(conditionComponent);
-  editor.register(DelayComponent);
-  editor.register(selector);
 
-  // var add = await components.createNode();
-  // // add.position = [500, 240];
 
-  // editor.addNode(add);
-  // set up the intial passed nodes  with custom ids
 
   for (let node in nodes) {
     let createNode;
@@ -311,20 +242,14 @@ export async function createEditor(container, data) {
     await engine.process(editor.toJSON());
   }
 
-  //  // making helper obj for making connections based on custom data
-  //  let helperObj={};
-  //  let editorData= editor.toJSON();
-  //  for (let idNo in editorData.nodes) {
-  //   helperObj[idNo]=editorData.nodes[idNo];
-  // }
-  // making custom connections
+  // making custom connections passed by options object in Flowmanager
 
   for (let node in nodes) {
     if (nodes[node].parentNodeId != "") {
       let editorData = editor.toJSON();
       const nid = nodes[node].nodeId;
       const pid = nodes[node].parentNodeId;
-      // helperObj[pid].outputs.num.connections.push({node:pid,output:'num',data:{}});
+      
       editorData.nodes[nid].inputs.num1.connections.push({
         node: pid,
         output: "num",
@@ -350,51 +275,13 @@ export async function createEditor(container, data) {
       await engine.process(editor.toJSON());
     }
   );
-  // editor.on("updateconnection", async (el, connection, points) => {
-  //   console.log(el, connection, points);
-  // });
+ 
   editor.on("connectioncreate", async (connection) => {
     console.log("this is connection==>", connection);
   });
-  // editor.on("keydown", async(keyEvent)=>{
-  //     if(keyEvent.key=="Enter"){
-  //       var newnode= await components2.createNode();
-  //       newnode.position = [400, 240];
-  //       editor.addNode(newnode);
 
-  //       await engine.abort();
 
-  //       await engine.process(editor.toJSON());
 
-  //     }
-  // });
-
-  let x, y;
-  // editor.on("connectionpath", async (data) => {
-  //   console.log("connectionpath ", data);
-  //   [x, y] = [data.points[2], data.points[3]];
-  // });
-  let pointerEvent;
-  let view = editor.view;
-  editor.on("click", async (e) => {
-    publish("any click");
-    console.log("====================================");
-    console.log(editor.toJSON());
-    console.log("====================================");
-  });
-  // editor.on("connectiondrop", async (data1) => {
-  //   console.log("connectiondrop ", data1);
-  //   var newnode= await components2.createNode();
-  //   newnode.position = [x, y];
-  //     console.log("newnode -->",newnode);
-
-  //     editor.addNode(newnode);
-  //    editor.connect(data1,newnode.inputs.get("num1"));
-
-  //   await engine.abort();
-
-  //   await engine.process(editor.toJSON());
-  // })
 
   editor.on("contextmenu", ({ e, view }) => {
     console.log("mouseEvent of context menu-->", e, view);
@@ -468,7 +355,8 @@ export async function createEditor(container, data) {
     // ========
     await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
     //==========
-    await editor.trigger("arrange", { node: editor.nodes[0] }); 
+    await editor.trigger("arrange", { node: editor.nodes[0] });
+    await publish("positionReset");
   });
   // event to remove node BFS traversal
   subscribe("delete node", async ({ detail }) => {
