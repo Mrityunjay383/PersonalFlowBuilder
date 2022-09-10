@@ -10,9 +10,7 @@ function App() {
   let flowManager = flowRef.current;
   // Events customised
 
-  flowManager.on("any click", () => {
-    console.log("say-hello");
-  });
+
   flowManager.on("node.click", ({ detail }) => {
     let event, node, options;
     event = detail.e; // pointer event

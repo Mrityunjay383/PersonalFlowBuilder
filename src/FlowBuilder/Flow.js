@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { publish, publishedReturn, subscribe } from "./events.js";
 import { useRete } from "./rete.js";
 
-function Editor({ data}) {
+function Editor({ data }) {
   const [setContainer] = useRete(data);
   return (
     <>
@@ -19,53 +19,48 @@ function Editor({ data}) {
 }
 
 function FLow(props) {
-
   return {
     render: function () {
       return <Editor data={props} />;
     },
-    renderArrow: function(fromNodeId,toNodeId,data){
-      publish("renderArrow",{fromNodeId,toNodeId,data})
-    }
-    ,
-    reset: function(){
+    renderArrow: function (fromNodeId, toNodeId, data) {
+      publish("renderArrow", { fromNodeId, toNodeId, data });
+    },
+    reset: function () {
       publish("resetEverything");
     },
-    position:{
-      setPosition:function(x,y,zoom){
-        console.log("setposition called",x,y,zoom);
-        publish("setPosition",{x,y,zoom});
+    position: {
+      setPosition: function (x, y, zoom) {
+        console.log("setposition called", x, y, zoom);
+        publish("setPosition", { x, y, zoom });
       },
-      getPosition:  async function (){
-        
-        let x,y,zoom;
-       
-        publish("getPosition");
-        subscribe("catchPosition",async ({detail})=>{
-          x=detail.x;
-          y=detail.y;
-          zoom=detail.zoom;
-          console.log("this is inside of catchPosition==>",detail);
-          
-        }) 
-      
-        return {x,y,zoom};
-   
+      getPosition: async function () {
+        let x, y, zoom;
+
+        await publish("getPosition");
+        subscribe("catchPosition", async ({ detail }) => {
+          x = detail.x;
+          y = detail.y;
+          zoom = detail.zoom;
+          console.log("this is inside of catchPosition==>", detail);
+        });
+
+        return { x, y, zoom };
       },
-      reset:function(){
+      reset: function () {
         publish("positionReset");
-      }
+      },
     },
     nodes: {
       add: function (node) {
-        publish("add node",node);
+        publish("add node", node);
       },
-      remove:function (nodeId){
-        publish("delete node",nodeId);
-      }, 
-      reset:function(){
+      remove: function (nodeId) {
+        publish("delete node", nodeId);
+      },
+      reset: function () {
         publish("nodesPositionReset");
-      }
+      },
     },
     on: function (eventName, listener) {
       document.addEventListener(eventName, listener);
