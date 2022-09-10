@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { publish, publishedReturn, subscribe } from "./events.js";
+import React from "react";
+import { publish,subscribe } from "./events.js";
 import { useRete } from "./rete.js";
 
 function Editor({ data }) {

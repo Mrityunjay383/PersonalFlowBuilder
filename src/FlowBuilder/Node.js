@@ -5,7 +5,7 @@ import playIcon from "./images/playIcon.svg";
 export class Action extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
-    const { outputs, controls, inputs, selected } = this.state;
+    const { outputs, controls, inputs,} = this.state;
 
     return (
       <div
@@ -40,11 +40,11 @@ export class Action extends Node {
               io={input}
               innerRef={bindSocket}
             />
-            <img className="playIcon" src={playIcon} /> {node.name}
+            <im alt="playicon" className="playIcon" src={playIcon} /> {node.name}
           </div>
         ))}
 
-        {/* Controls */}
+        {/* Controls  */}
         {controls.map((control) => (
           <Control
             className="control"

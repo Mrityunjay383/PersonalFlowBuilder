@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 import "./App.css";
-import { publish, subscribe } from "./FlowBuilder/events";
 
 import FLow from "./FlowBuilder/Flow";
 

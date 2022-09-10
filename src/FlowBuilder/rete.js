@@ -5,17 +5,12 @@ import ReactRenderPlugin from "rete-react-render-plugin";
 import ConnectionPlugin from "rete-connection-plugin";
 import ConnectionPathPlugin from "rete-connection-path-plugin";
 import AreaPlugin from "rete-area-plugin";
-import Context from "efficy-rete-context-menu-plugin";
 import AutoArrangePlugin from "rete-auto-arrange-plugin";
-import ContextMenuPlugin, {
-  Menu,
-  Item,
-  Search,
-} from "rete-context-menu-plugin";
+import ContextMenuPlugin from "rete-context-menu-plugin";
 import { MyNode } from "./Start";
 import { Action } from "./Node";
 
-import { publish, subscribe, subscribeDReturn } from "./events";
+import { publish, subscribe } from "./events";
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
 numSocket.combineWith(anyTypeSocket);
@@ -109,7 +104,7 @@ export async function createEditor(container, data) {
   editor.use(ContextMenuPlugin, {
     searchBar: false, // true by default
     rename(component) {
-      if (component.name != "Start") {
+      if (component.name !== "Start") {
         return `+${component.name}`;
       }
     },
@@ -132,7 +127,7 @@ export async function createEditor(container, data) {
       fromNodeId = connection.connection.output.node.id;
       let v;
 
-      if (fromNodeId == detail.fromNodeId && toNodeId == detail.toNodeId) {
+      if (fromNodeId === detail.fromNodeId && toNodeId === detail.toNodeId) {
         v = detail.data;
 
         let { fill, stroke, strokeWidth } = v;
@@ -155,7 +150,7 @@ export async function createEditor(container, data) {
     fromNodeId = connection.output.node.id;
 
     let v;
-    // if(fromNodeId=="node-1" && toNodeId=="node-2"){
+    // if(fromNodeId==="node-1" && toNodeId==="node-2"){
     //   v=data.renderArrow({fromNodeId,toNodeId});
     // }
 
@@ -185,7 +180,7 @@ export async function createEditor(container, data) {
 
   for (let node in nodes) {
     let createNode;
-    if (nodes[node].parentNodeId == "") {
+    if (nodes[node].parentNodeId === "") {
       createNode = await components.createNode();
     } else {
       createNode = await components2.createNode();
@@ -240,7 +235,7 @@ export async function createEditor(container, data) {
   });
   let run = 0;
   editor.on("nodetranslate", (data) => {
-    if (run == 0) {
+    if (run === 0) {
       publish("node.drag.start", data);
       run++;
     } else {
@@ -259,7 +254,7 @@ export async function createEditor(container, data) {
     publish("loaded", d);
   });
 
-  ///customisation event driven programming =====.......
+  ///customisation event driven programming =======.......
 
   // event of add node
   subscribe("add node", async ({ detail }) => {
@@ -292,9 +287,9 @@ export async function createEditor(container, data) {
     await engine.abort();
     await engine.process(editor.toJSON());
 
-    // ========
+    // ===========
     await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
-    //==========
+    //=============
     await editor.trigger("arrange", { node: editor.nodes[0] });
     await publish("positionReset");
   });
@@ -340,9 +335,9 @@ export async function createEditor(container, data) {
     await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
-    // ========
+    // ===========
     publish("node.removed", todeletNode); // publishing for subscribed event node.removed
-    //==========
+    //=============
   });
 
   // to setPosition of canva
@@ -390,7 +385,7 @@ export async function createEditor(container, data) {
     for (let node in nodes) {
       let createNode;
       id_no = 1;
-      if (nodes[node].parentNodeId == "") {
+      if (nodes[node].parentNodeId === "") {
         createNode = await components.createNode();
       } else {
         createNode = await components2.createNode();
