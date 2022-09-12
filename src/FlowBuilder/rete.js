@@ -73,7 +73,6 @@ class NumComponent extends Rete.Component {
 class AddComponent extends Rete.Component {
   constructor(name) {
     super(name);
-    
     this.data.component = MyNode; // optional
   }
 
@@ -94,7 +93,7 @@ export async function createEditor(container, data) {
   let nodes = data.options.nodes;
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
-
+    console.log(components.data.component);
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
 
   editor.use(ConnectionPlugin);
