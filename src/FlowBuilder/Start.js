@@ -6,7 +6,7 @@ import { publish } from "./events";
 export class MyNode extends Node {
   render() {
     const { node, bindSocket, bindControl } = this.props;
-    const { outputs, controls, inputs, selected } = this.state;
+    const { outputs, controls, inputs, } = this.state;
 
     return (
       <div
@@ -33,7 +33,7 @@ export class MyNode extends Node {
         style={{ background: "#FDFDFD" }}
       >
         <div className="title">
-          <img className="playIcon" src={playIcon} /> {node.name}
+          <img alt ="playicon" className="playIcon" src={playIcon} /> {node.name}
         </div>
         {/* Outputs */}
 
