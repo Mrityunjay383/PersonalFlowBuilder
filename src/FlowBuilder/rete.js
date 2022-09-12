@@ -6,7 +6,6 @@ import ConnectionPlugin from "rete-connection-plugin";
 import ConnectionPathPlugin from "rete-connection-path-plugin";
 import AreaPlugin from "rete-area-plugin";
 import AutoArrangePlugin from "rete-auto-arrange-plugin";
-import ContextMenuPlugin from "rete-context-menu-plugin";
 import { MyNode } from "./Start";
 import { Action } from "./Node";
 
@@ -74,7 +73,7 @@ class NumComponent extends Rete.Component {
 class AddComponent extends Rete.Component {
   constructor(name) {
     super(name);
-    this.data.noContextMenu = true;
+    
     this.data.component = MyNode; // optional
   }
 
@@ -101,14 +100,7 @@ export async function createEditor(container, data) {
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, { createRoot });
 
-  editor.use(ContextMenuPlugin, {
-    searchBar: false, // true by default
-    rename(component) {
-      if (component.name !== "Start") {
-        return `+${component.name}`;
-      }
-    },
-  });
+
   editor.use(ConnectionPathPlugin, {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
