@@ -16,24 +16,24 @@ numSocket.combineWith(anyTypeSocket);
 
 // Nodes components class
 class NumControl extends Rete.Control {
-  static component = ({ value, onChange }) => (
-    <input
-      type="button"
-      value="Add Template"
-      ref={(ref) => {
-        ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
-      }}
-      onClick={(e) => {
-        onChange(value + 1);
-      }}
-    />
-  );
+  // static component = ({ value, onChange }) => (
+  //   <input
+  //     type="button"
+  //     value="Add Template"
+  //     ref={(ref) => {
+  //       ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
+  //     }}
+  //     onClick={(e) => {
+  //       onChange(value + 1);
+  //     }}
+  //   />
+  // );
 
-  constructor(emitter, key, node, readonly = false) {
+  constructor(emitter, component,key, node, readonly = false) {
     super(key);
     this.emitter = emitter;
     this.key = key;
-    this.component = NumControl.component;
+    this.component =component
     const initial = node.data[key] || 0;
 
     node.data[key] = initial;
@@ -63,9 +63,12 @@ class NumComponent extends Rete.Component {
   builder(node) {
     var inp1 = new Rete.Input("num1", "Number", numSocket);
     var out = new Rete.Output("num", "Next Step", numSocket);
+    const component=()=>(
+      <h6>this is control of action  </h6>
+    );
     return node
       .addInput(inp1)
-      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addControl(new NumControl(this.editor,component, "preview", node, true))
       .addOutput(out);
   }
 }
@@ -75,11 +78,14 @@ class AddComponent extends Rete.Component {
     super(name);
     this.data.component = MyNode; // optional
   }
-
+  
   builder(node) {
+    const component=()=>(
+      <h6>this is control of start  </h6>
+    );
     var out = new Rete.Output("num", "The First Step", numSocket);
     return node
-      .addControl(new NumControl(this.editor, "preview", node, true))
+      .addControl(new NumControl(this.editor,component, "preview", node, true))
       .addOutput(out);
   }
 }
@@ -93,8 +99,9 @@ export async function createEditor(container, data) {
   let nodes = data.options.nodes;
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
-    console.log(components.data.component);
+    console.log(components);
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
+
 
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, { createRoot });
@@ -104,7 +111,7 @@ export async function createEditor(container, data) {
     options: { vertical: false, curvature: 0.4 },
     arrow: {
       color: data.theme.arrow.fill,
-      marker: "M-5,-10 L-5,10 L20,0 z",
+      marker: "M-5,-10 L-5,10 L30,0 z",
     },
   });
 
@@ -122,7 +129,7 @@ export async function createEditor(container, data) {
         v = detail.data;
 
         let { fill, stroke, strokeWidth } = v;
-
+          console.log(connection.el);
         connection.el.getElementsByClassName("main-path")[0].setAttribute(
           "style",
           `stroke:${fill} !important;fill:${stroke} !important;
@@ -134,6 +141,20 @@ export async function createEditor(container, data) {
       }
     });
   });
+  
+   const edi=editor
+  editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
+   if(node.name=="start") console.log(el);
+  console.log(component);
+  let  spcomponent=()=>(
+    data.controls
+   );
+  node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
+  
+})
+  editor.on("rendercontrol",({ el, control })=>{
+    console.log("rendering control==>",{ el, control })
+  })
 
   editor.on("renderconnection", ({ el, connection, points }) => {
     let fromNodeId, toNodeId;

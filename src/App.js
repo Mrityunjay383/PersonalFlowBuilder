@@ -151,13 +151,9 @@ function App() {
             strokeWidth: "3px",
           },
         }}
-        // renderArrow={({ fromNodeId, toNodeId }) => {
-        //   return {
-        //     fill: "red",
-        //     stroke: "none",
-        //     strokeWidth: "2px",
-        //   };
-        // }}
+        controls={ 
+          <h6>eudjknoi</h6>
+      }
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
           position: { x: 1, y: 1, zoom: 1 },
