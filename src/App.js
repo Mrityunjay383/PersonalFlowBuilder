@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, {useRef} from "react";
 
 import "./App.css";
 
@@ -8,7 +8,7 @@ function App() {
   let flowRef = useRef(FLow());
   let flowManager = flowRef.current;
 
-  flowManager.on("node.click", ({ detail }) => {
+  flowManager.on("node.click", ({detail}) => {
     let event, node, options;
     event = detail.e; // pointer event
     node = detail.node; // value of node which is selected
@@ -21,39 +21,39 @@ function App() {
     });
     console.log("====================================");
   });
-  flowManager.on("node.added", ({ detail }) => {
-    console.log("nodes is addeed====>", detail);
+  flowManager.on("node.added", ({detail}) => {
+    console.log("nodes is added====>", detail);
   });
-  flowManager.on("node.removed", ({ detail }) => {
+  flowManager.on("node.removed", ({detail}) => {
     console.log("node is removed===>", detail);
   });
-  flowManager.on("loaded", ({ detail }) => {
+  flowManager.on("loaded", ({detail}) => {
     console.log("====================================");
     console.log("document is fully loaded ", detail);
     console.log("====================================");
   });
-  flowManager.on("position.changed", ({ detail }) => {
+  flowManager.on("position.changed", ({detail}) => {
     console.log("canvas position is changed", detail);
   });
-  flowManager.on("node.mouse.over", ({ detail }) => {
+  flowManager.on("node.mouse.over", ({detail}) => {
     console.log("mouse over");
   });
-  flowManager.on("node.mouse.out", ({ detail }) => {
+  flowManager.on("node.mouse.out", ({detail}) => {
     console.log("mouse out");
   });
-  flowManager.on("node.mouse.down", ({ detail }) => {
+  flowManager.on("node.mouse.down", ({detail}) => {
     console.log("mouse down");
   });
-  flowManager.on("node.mouse.up", ({ detail }) => {
+  flowManager.on("node.mouse.up", ({detail}) => {
     console.log("mouse up");
   });
-  flowManager.on("node.position_changed", ({ detail }) => {
+  flowManager.on("node.position_changed", ({detail}) => {
     console.log("node position changed-->", detail);
   });
-  flowManager.on("node.drag.start", ({ detail }) => {
+  flowManager.on("node.drag.start", ({detail}) => {
     console.log("node drag start", detail);
   });
-  flowManager.on("node.drag.end", ({ detail }) => {
+  flowManager.on("node.drag.end", ({detail}) => {
     console.log("node drag end", detail);
   });
   const node1 = {
@@ -72,7 +72,7 @@ function App() {
   return (
     <div className="App">
       <h1>This is a the flow Component</h1>
-      <hr />
+      <hr/>
       <button
         type="button"
         onClick={async () => {
@@ -160,7 +160,7 @@ function App() {
         // }}
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
-          position: { x: 1, y: 1, zoom: 1 },
+          position: {x: 1, y: 1, zoom: 1},
           // nodes
           nodes: {
             // each node has:

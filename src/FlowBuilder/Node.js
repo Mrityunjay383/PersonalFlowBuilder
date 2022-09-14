@@ -1,11 +1,12 @@
 import React from "react";
-import { Node, Socket, Control } from "rete-react-render-plugin";
-import { publish } from "./events";
+import {Control, Node, Socket} from "rete-react-render-plugin";
+import {publish} from "./events";
 import playIcon from "./images/playIcon.svg";
+
 export class Action extends Node {
   render() {
-    const { node, bindSocket, bindControl } = this.props;
-    const { outputs, controls, inputs,} = this.state;
+    const {node, bindSocket, bindControl} = this.props;
+    const {outputs, controls, inputs} = this.state;
 
     return (
       <div
@@ -29,7 +30,7 @@ export class Action extends Node {
           publish("node.drag.end", d);
         }}
         className={`node actionNode`}
-        style={{ background: "#FDFDFD" }}
+        style={{background: "#FDFDFD"}}
       >
         {/* Inputs */}
         {inputs.map((input) => (
@@ -40,7 +41,8 @@ export class Action extends Node {
               io={input}
               innerRef={bindSocket}
             />
-            <im alt="playicon" className="playIcon" src={playIcon} /> {node.name}
+            <im alt="playicon" className="playIcon" src={playIcon}/>
+            {node.name}
           </div>
         ))}
 
@@ -56,7 +58,7 @@ export class Action extends Node {
 
         {outputs.map((output) => (
           <div className="output" key={output.key}>
-            <div className="output-title" style={{ fontSize: "10px" }}>
+            <div className="output-title" style={{fontSize: "10px"}}>
               {" "}
               {output.name}
             </div>

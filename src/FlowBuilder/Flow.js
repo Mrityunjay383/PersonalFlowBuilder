@@ -1,8 +1,8 @@
 import React from "react";
-import { publish,subscribe } from "./events.js";
-import { useRete } from "./rete.js";
+import {publish, subscribe} from "./events.js";
+import {useRete} from "./rete.js";
 
-function Editor({ data }) {
+function Editor({data}) {
   const [setContainer] = useRete(data);
   return (
     <>
@@ -17,21 +17,22 @@ function Editor({ data }) {
     </>
   );
 }
+
 let x, y, zoom;
-subscribe("catchPosition", async ({ detail }) => {
+subscribe("catchPosition", async ({detail}) => {
   x = detail.x;
   y = detail.y;
   zoom = detail.zoom;
-  
+
 });
 
 function FLow(props) {
   return {
     render: function () {
-      return <Editor data={props} />;
+      return <Editor data={props}/>;
     },
     renderArrow: function (fromNodeId, toNodeId, data) {
-      publish("renderArrow", { fromNodeId, toNodeId, data });
+      publish("renderArrow", {fromNodeId, toNodeId, data});
     },
     reset: function () {
       publish("resetEverything");
@@ -39,14 +40,13 @@ function FLow(props) {
     position: {
       setPosition: function (x, y, zoom) {
         console.log("setposition called", x, y, zoom);
-        publish("setPosition", { x, y, zoom });
+        publish("setPosition", {x, y, zoom});
       },
       getPosition: async function () {
-        
 
         await publish("getPosition");
-        
-        return { x, y, zoom };
+
+        return {x, y, zoom};
       },
       reset: function () {
         publish("positionReset");
