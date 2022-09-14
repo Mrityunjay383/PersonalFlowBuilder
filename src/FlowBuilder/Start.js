@@ -1,12 +1,13 @@
 import React from "react";
-import { Node, Socket, Control } from "rete-react-render-plugin";
-import playIcon from "./images/playIcon.svg";
+import {Control, Node, Socket} from "rete-react-render-plugin";
 import "../App.css";
-import { publish } from "./events";
+import {publish} from "./events";
+import playIcon from "./images/playIcon.svg";
+
 export class MyNode extends Node {
   render() {
-    const { node, bindSocket, bindControl } = this.props;
-    const { outputs, controls, inputs, } = this.state;
+    const {node, bindSocket, bindControl} = this.props;
+    const {outputs, controls, inputs, selected} = this.state;
 
     return (
       <div
@@ -30,10 +31,14 @@ export class MyNode extends Node {
           publish("node.drag.end", d);
         }}
         className={`node`}
-        style={{ background: "#FDFDFD" }}
+        style={{background: "#FDFDFD"}}
       >
         <div className="title">
+<<<<<<< HEAD
           <img alt ="playicon" className="playIcon" src={playIcon} /> {node.name}
+=======
+          <img className="playIcon" src={playIcon}/> {node.name}
+>>>>>>> e887b282e712e817f4e9c7e66121cc1df90b09eb
         </div>
         {/* Outputs */}
 
@@ -50,7 +55,7 @@ export class MyNode extends Node {
         {inputs.map((input) => (
           <div className="input" key={input.key}>
             <Socket
-              style={{ backgroundColor: "red" }}
+              style={{backgroundColor: "red"}}
               type="input"
               socket={input.socket}
               io={input}
@@ -70,7 +75,7 @@ export class MyNode extends Node {
         ))}
         {outputs.map((output) => (
           <div className="output" key={output.key}>
-            <div className="output-title" style={{ fontSize: "10px" }}>
+            <div className="output-title" style={{fontSize: "10px"}}>
               {" "}
               {output.name}
             </div>
