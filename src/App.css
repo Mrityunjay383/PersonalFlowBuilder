@@ -23,18 +23,6 @@
   color: black !important;
 }
 
-.playIcon {
-  height: 16px;
-  background-color: #60CC6C;
-  border-radius: 100%;
-}
-<<<<<<< HEAD
-.node .input {
-  width: 0px !important;
-  height: 0px !important;
-background-color: #FCB340 !important;
-}
-
 
   /* .connection .main-path{ */
     /* stroke: #8492A6 !important; */
@@ -42,7 +30,7 @@ background-color: #FCB340 !important;
     /* stroke-width: 3px !important; */
     
   /* }  */
-=======
+
 
 .socket {
   background-color: #8492A6 !important;
@@ -56,31 +44,4 @@ background-color: #FCB340 !important;
   background-color: #FCB340 !important;
 }
 
-.connection .main-path {
-  stroke: #8492A6 !important;
-  /* fill: antiquewhite !important; */
-  stroke-width: 3px !important;
 
-}
-
-/* for the context menu */
-
-.context-menu .item {
-  background-color: #FFFFFF !important;
-  border: 0px solid white !important;
-  padding: 5px 10px !important;
-  font-family: sans-serif !important;
-}
-
-.context-menu .item {
-  color: #60CC6C !important;
-  border-bottom: dashed !important;
-  border-width: 1px !important;
-  border-color: #D9DCE4 !important;
-
-}
-
-.context-menu .item:hover {
-  background-color: #2B5088 !important;
-}
->>>>>>> e887b282e712e817f4e9c7e66121cc1df90b09eb

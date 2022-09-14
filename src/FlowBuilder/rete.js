@@ -18,7 +18,7 @@ numSocket.combineWith(anyTypeSocket);
 
 // Nodes components class
 class NumControl extends Rete.Control {
-<<<<<<< HEAD
+
   // static component = ({ value, onChange }) => (
   //   <input
   //     type="button"
@@ -33,22 +33,7 @@ class NumControl extends Rete.Control {
   // );
 
   constructor(emitter, component,key, node, readonly = false) {
-=======
-  static component = ({value, onChange}) => (
-    <input
-      type="button"
-      value="Add Template"
-      ref={(ref) => {
-        ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
-      }}
-      onClick={(e) => {
-        onChange(value + 1);
-      }}
-    />
-  );
 
-  constructor(emitter, key, node, readonly = false) {
->>>>>>> cddd937780406e38efbdc85bed46a589ecbe1862
     super(key);
     this.emitter = emitter;
     this.key = key;
@@ -66,12 +51,12 @@ class NumControl extends Rete.Control {
     };
   }
 
-  setValue(val) {
-    this.props.value = val;
-    this.putData(this.key, val);
-    this.update();
-  }
-}
+  // setValue(val) {
+  //   this.props.value = val;
+  //   this.putData(this.key, val);
+  //   this.update();
+  // }
+};
 
 class NumComponent extends Rete.Component {
   constructor(name) {
@@ -149,9 +134,6 @@ export async function createEditor(container, data) {
       if (fromNodeId === detail.fromNodeId && toNodeId === detail.toNodeId) {
         v = detail.data;
 
-        let { fill, stroke, strokeWidth } = v;
-          console.log(connection.el);
-
         let {fill, stroke, strokeWidth} = v;
 
         connection.el.getElementsByClassName("main-path")[0].setAttribute(
@@ -168,17 +150,27 @@ export async function createEditor(container, data) {
   
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
-   if(node.name=="start") console.log(el);
-  console.log(component);
-  let  spcomponent=()=>(
-    data.controls
-   );
+
+
+  let  spcomponent;
+  if(data.rendernodes[node.id]){
+    spcomponent=()=>(
+      data.rendernodes[node.id].controls()
+      ); 
+  }
+  else{
+    spcomponent=()=>(
+      <></>
+      ); 
+
+  }
+ 
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
   
 })
-  editor.on("rendercontrol",({ el, control })=>{
-    console.log("rendering control==>",{ el, control })
-  })
+  // editor.on("rendercontrol",({ el, control })=>{
+  //   console.log("rendering control==>",{ el, control })
+  // })
 
   editor.on("renderconnection", ({el, connection, points}) => {
     let fromNodeId, toNodeId;

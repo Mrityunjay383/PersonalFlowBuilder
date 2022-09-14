@@ -30,15 +30,14 @@ export class MyNode extends Node {
         onDragEnd={(d) => {
           publish("node.drag.end", d);
         }}
-        className={`node`}
-        style={{background: "#FDFDFD"}}
+        className={`node   FlowbBuilder_${node.id}`}
+      
       >
-        <div className="title">
-<<<<<<< HEAD
-          <img alt ="playicon" className="playIcon" src={playIcon} /> {node.name}
-=======
-          <img className="playIcon" src={playIcon}/> {node.name}
->>>>>>> e887b282e712e817f4e9c7e66121cc1df90b09eb
+        <div className={ `FlowbBuilder_${node.id}_title`} >
+
+          {/* <img className="playIcon" src={playIcon}/>  */}
+          {node.name}
+
         </div>
         {/* Outputs */}
 

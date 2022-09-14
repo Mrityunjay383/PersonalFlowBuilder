@@ -68,7 +68,6 @@ function App() {
       y: 100,
     },
   };
-
   return (
     <div className="App">
       <h1>This is a the flow Component</h1>
@@ -151,8 +150,24 @@ function App() {
             strokeWidth: "3px",
           },
         }}
-        controls={ 
-          <h6>eudjknoi</h6>
+        rendernodes={
+          {
+           "node-1":{
+            controls:()=>{ 
+              return (
+               <div> 
+               <button 
+               onClick={()=>{
+                console.log("click hogya miracle ---->")
+               }}type="button">
+               miracle
+              </button>
+              </div>
+              )
+          }
+        },
+
+        }
       }
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.

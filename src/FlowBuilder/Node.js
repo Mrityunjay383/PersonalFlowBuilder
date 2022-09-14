@@ -28,20 +28,19 @@ export class Action extends Node {
         }}
         onDragEnd={(d) => {
           publish("node.drag.end", d);
-        }}
-        className={`node actionNode`}
-        style={{background: "#FDFDFD"}}
+        }}  
+        className={`node   FlowbBuilder_${node.id}`}
       >
         {/* Inputs */}
         {inputs.map((input) => (
-          <div className="title actionTitle" key={input.key}>
+          <div className="FlowbBuilder_${node.id}_title " key={input.key}>
             <Socket
               type="input"
               socket={input.socket}
               io={input}
               innerRef={bindSocket}
             />
-            <im alt="playicon" className="playIcon" src={playIcon}/>
+            {/* <img alt="playicon" className="playIcon" src={playIcon}/> */}
             {node.name}
           </div>
         ))}
