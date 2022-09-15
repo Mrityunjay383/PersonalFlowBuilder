@@ -2,37 +2,9 @@
   font-family: sans-serif;
 }
 
-.actionNode {
-  border-width: 0px !important;
-}
-
-.actionNode:hover {
-  border-color: #FCB340 !important;
-  border-width: 2px !important;
-}
-
-.node .title {
-  color: black !important;
-}
-
-.node .actionTitle {
-  background-color: #FFECA7;
-}
-
-.output-title {
-  color: black !important;
-}
 
 
-  /* .connection .main-path{ */
-    /* stroke: #8492A6 !important; */
-    /* fill: antiquewhite !important; */
-    /* stroke-width: 3px !important; */
-    
-  /* }  */
-
-
-.socket {
+/* .socket {
   background-color: #8492A6 !important;
   border: 1px solid #8492A6 !important;
   height: 12px !important;
@@ -42,6 +14,14 @@
 
 .socket .input {
   background-color: #FCB340 !important;
+} */
+
+
+.FlowbBuilder_node-1{
+  background-color: none;
 }
 
-
+.FlowbBuilder_node-1_title{
+margin-left: 40%;
+font-size: larger;
+}

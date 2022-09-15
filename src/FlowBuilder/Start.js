@@ -36,7 +36,7 @@ export class MyNode extends Node {
         <div className={ `FlowbBuilder_${node.id}_title`} >
 
           {/* <img className="playIcon" src={playIcon}/>  */}
-          {node.name}
+          {node.data.preview}
 
         </div>
         {/* Outputs */}
@@ -74,10 +74,6 @@ export class MyNode extends Node {
         ))}
         {outputs.map((output) => (
           <div className="output" key={output.key}>
-            <div className="output-title" style={{fontSize: "10px"}}>
-              {" "}
-              {output.name}
-            </div>
             <Socket
               type="output"
               socket={output.socket}

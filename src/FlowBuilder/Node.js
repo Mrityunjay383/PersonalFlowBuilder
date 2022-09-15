@@ -41,7 +41,7 @@ export class Action extends Node {
               innerRef={bindSocket}
             />
             {/* <img alt="playicon" className="playIcon" src={playIcon}/> */}
-            {node.name}
+            {node.data.preview}
           </div>
         ))}
 
@@ -57,10 +57,7 @@ export class Action extends Node {
 
         {outputs.map((output) => (
           <div className="output" key={output.key}>
-            <div className="output-title" style={{fontSize: "10px"}}>
-              {" "}
-              {output.name}
-            </div>
+          
             <Socket
               type="output"
               socket={output.socket}

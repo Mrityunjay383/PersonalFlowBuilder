@@ -58,6 +58,7 @@ function App() {
   });
   const node1 = {
     nodeId: "node-4",
+    title:"new added node ",
     type: "email",
     options: {},
     parentNodeId: "node-2",
@@ -166,6 +167,20 @@ function App() {
               )
           }
         },
+        "node-4":{
+          controls:()=>{ 
+            return (
+             <div> 
+             <button 
+             onClick={()=>{
+              console.log("click hogya miracle 4---->")
+             }}type="button">
+             miracle 4
+            </button>
+            </div>
+            )
+        }
+        }
 
         }
       }
@@ -181,6 +196,7 @@ function App() {
             // 4. parentNodeId - only root node has no parentNodeId, every other node must always have "path" to root node.
             "node-2": {
               nodeId: "node-2",
+              title :"2nd node",
               type: "time",
               options: {},
               parentNodeId: "node-1",
@@ -192,6 +208,7 @@ function App() {
               },
             },
             "node-1": {
+              title :"starting node",
               nodeId: "node-1",
               type: "email",
               options: {},
@@ -205,6 +222,7 @@ function App() {
             },
             "node-5": {
               nodeId: "node-5",
+              title :"5th node ",
               type: "time",
               options: {},
               parentNodeId: "node-2",
@@ -217,6 +235,7 @@ function App() {
             },
             "node-3": {
               nodeId: "node-3",
+              title :"3rd node ",
               type: "email",
               options: {},
               parentNodeId: "node-2",

@@ -213,11 +213,17 @@ export async function createEditor(container, data) {
     } else {
       createNode = await components2.createNode();
     }
-
+  
     createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
-    editor.addNode(createNode);
+    // editor.addNode(createNode);
+
+
     let editorData = editor.toJSON();
+    editorData.nodes[id_no]=createNode;
     editorData.nodes[id_no].id = nodes[node].nodeId;
+    editorData.nodes[id_no].data.preview=nodes[node].title;
+    console.log(editorData.nodes);
+    console.log(editor);
     incId(id_no);
     await editor.fromJSON(editorData);
     await engine.abort();
@@ -288,6 +294,7 @@ export async function createEditor(container, data) {
   subscribe("add node", async ({detail}) => {
     var newnode = await components2.createNode();
     newnode.position = [100, 0];
+    newnode.data.preview=detail.title;
     editor.addNode(newnode);
     let editorD = editor.toJSON();
 
@@ -412,18 +419,23 @@ export async function createEditor(container, data) {
     await engine.process(editor.toJSON());
     for(let node in nodes) {
       let createNode;
-      id_no = 1;
       if (nodes[node].parentNodeId === "") {
         createNode = await components.createNode();
       } else {
         createNode = await components2.createNode();
       }
-
+    
       createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
-      createNode.id = nodes[node].nodeId;
-      editor.addNode(createNode);
+      // editor.addNode(createNode);
+  
+  
       let editorData = editor.toJSON();
-
+      editorData.nodes[id_no]=createNode;
+      editorData.nodes[id_no].id = nodes[node].nodeId;
+      editorData.nodes[id_no].data.preview=nodes[node].title;
+      console.log(editorData.nodes);
+      console.log(editor);
+      incId(id_no);
       await editor.fromJSON(editorData);
       await engine.abort();
       await engine.process(editor.toJSON());
