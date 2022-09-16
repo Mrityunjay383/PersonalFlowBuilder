@@ -84,10 +84,6 @@ function App() {
       },
       
     };
-  
-    
-  console.log("heleknrowef------");
-    
   }, );
   const [nodestorender,setnodestorender]=useState(
     { "node-1":{
@@ -116,6 +112,7 @@ function App() {
       <button
         type="button"
         onClick={async () => {
+          console.log("----->",nodestorender);
           setnodestorender((curr)=>{
             return {...curr,"node-4":{
               controls:()=>{ 

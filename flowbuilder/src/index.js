@@ -27,7 +27,6 @@ subscribe("catchPosition", async ({detail}) => {
 });
 
 export function Flowbuilder(props) {
-  
   return {
     render: function () {
       return <Editor data={props}/>;
