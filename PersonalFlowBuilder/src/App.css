@@ -1,0 +1,27 @@
+.App {
+  font-family: sans-serif;
+}
+
+
+
+/* .socket {
+  background-color: #8492A6 !important;
+  border: 1px solid #8492A6 !important;
+  height: 12px !important;
+  width: 12px !important;
+  margin-right: 0px !important;
+}
+
+.socket .input {
+  background-color: #FCB340 !important;
+} */
+
+
+.FlowbBuilder_node-1{
+  background-color: green !important;
+}
+
+.FlowbBuilder_node-1_title{
+margin-left: 40%;
+font-size: larger;
+}
