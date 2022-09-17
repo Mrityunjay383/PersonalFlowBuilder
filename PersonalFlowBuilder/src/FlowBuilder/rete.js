@@ -9,8 +9,8 @@ import ContextMenuPlugin from "rete-context-menu-plugin";
 import ReactRenderPlugin from "rete-react-render-plugin";
 
 import {publish, subscribe} from "./events";
-import {Action} from "./Node";
-import {MyNode} from "./Start";
+import {Action} from "./nodes/Node";
+import {MyNode} from "./nodes/Start";
 
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
@@ -151,7 +151,6 @@ export async function createEditor(container, data) {
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
 
-
   let  spcomponent;
   if(data.rendernodes[node.id]){
     spcomponent=()=>(
@@ -198,6 +197,7 @@ export async function createEditor(container, data) {
     }
   });
 
+  
   editor.use(AutoArrangePlugin, {margin: {x: 50, y: 50}, depth: 100});
   let obj = document.querySelectorAll("path");
   //  obj.style.stroke=data.theme.fill;
@@ -205,7 +205,7 @@ export async function createEditor(container, data) {
 
   editor.register(components);
   editor.register(components2);
-
+let doarrange;
   for(let node in nodes) {
     let createNode;
     if (nodes[node].parentNodeId === "") {
@@ -214,9 +214,15 @@ export async function createEditor(container, data) {
       createNode = await components2.createNode();
     }
   
+    doarrange=1;
+    if( nodes[node].meta.x && nodes[node].meta.y){
     createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
-    // editor.addNode(createNode);
-
+    doarrange=0;
+  }
+  else{
+    createNode.position=[100,100];
+  }
+  
 
     let editorData = editor.toJSON();
     editorData.nodes[id_no]=createNode;
@@ -228,6 +234,10 @@ export async function createEditor(container, data) {
     await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
+   
+  }
+  if(doarrange){
+     await editor.trigger("arrange", {node: editor.nodes[0]});
   }
 
   // making custom connections passed by options object in Flowmanager
@@ -411,6 +421,7 @@ export async function createEditor(container, data) {
   subscribe("nodesPositionReset", () => {
     editor.trigger("arrange", {node: editor.nodes[0]});
   });
+  
   subscribe("resetEverything", async () => {
     let data = editor.toJSON();
     data.nodes = {};
@@ -424,8 +435,11 @@ export async function createEditor(container, data) {
       } else {
         createNode = await components2.createNode();
       }
-    
+     doarrange=1;
+      if( nodes[node].meta.x && nodes[node].meta.y){
       createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
+      doarrange=0;
+    }
       // editor.addNode(createNode);
   
   
@@ -439,6 +453,9 @@ export async function createEditor(container, data) {
       await editor.fromJSON(editorData);
       await engine.abort();
       await engine.process(editor.toJSON());
+    }
+    if(doarrange){
+      editor.trigger("arrange", {node: editor.nodes[0]});
     }
 
     //  // making helper obj for making connections based on custom data

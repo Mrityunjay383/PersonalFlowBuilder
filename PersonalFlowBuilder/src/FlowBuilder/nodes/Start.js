@@ -1,8 +1,6 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
-import "../App.css";
-import {publish} from "./events";
-import playIcon from "./images/playIcon.svg";
+import {publish} from "../events";
 
 export class MyNode extends Node {
   render() {
@@ -30,10 +28,10 @@ export class MyNode extends Node {
         onDragEnd={(d) => {
           publish("node.drag.end", d);
         }}
-        className={`node   FlowbBuilder_${node.id}`}
+        className={`node   flowBuilder_${node.id}`}
       
       >
-        <div className={ `FlowbBuilder_${node.id}_title`} >
+        <div className={ `flowBuilder_${node.id}_title`} >
 
           {/* <img className="playIcon" src={playIcon}/>  */}
           {node.data.preview}

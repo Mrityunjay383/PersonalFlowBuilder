@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 
 import "./App.css";
 
-import {Flowbuilder} from "flowbuilder";
+import Flowbuilder from './FlowBuilder'
 function App() {
   
   
@@ -13,7 +13,7 @@ function App() {
   let node1;
   console.log("to see what we get ===>",Flowbuilder)
   // this use Effect ensures that on initial render ref value i null so no code should run 
-  useEffect(() => {
+  // useEffect(() => {
     if (flowRef.current) {
       flowManager = flowRef.current;
       console.log("runs assigne--",flowManager);
@@ -84,7 +84,7 @@ function App() {
       },
       
     };
-  }, );
+  // }, );
   const [nodestorender,setnodestorender]=useState(
     { "node-1":{
       controls:()=>{ 
