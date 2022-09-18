@@ -302,41 +302,50 @@ let doarrange;
 
   // event of add node
   subscribe("add node", async ({detail}) => {
-    var newnode = await components2.createNode();
-    newnode.position = [100, 0];
-    newnode.data.preview=detail.title;
-    editor.addNode(newnode);
-    let editorD = editor.toJSON();
-
-    editorD.nodes[1].id = detail.nodeId;
-    await editor.fromJSON(editorD);
-    await engine.abort();
-    await engine.process(editor.toJSON());
-    let editorData = editor.toJSON();
-    if (detail.parentNodeId != "") {
-      const nid = detail.nodeId;
-      const pid = detail.parentNodeId;
-      editorData.nodes[nid].inputs.num1.connections.push({
-        node: pid,
-        output: "num",
-        data: {},
-      });
-      editorData.nodes[pid].outputs.num.connections.push({
-        node: nid,
-        input: "num1",
-        data: {},
-      });
+    let flag=1;
+    editor.nodes.forEach((n)=>{
+      if(n.id===detail.nodeId){
+        flag=0;
+      }
+    });
+    if(flag){
+      var newnode = await components2.createNode();
+      newnode.position = [100, 0];
+      newnode.data.preview=detail.title;
+      editor.addNode(newnode);
+      let editorD = editor.toJSON();
+  
+      editorD.nodes[1].id = detail.nodeId;
+      await editor.fromJSON(editorD);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+      let editorData = editor.toJSON();
+      if (detail.parentNodeId != "") {
+        const nid = detail.nodeId;
+        const pid = detail.parentNodeId;
+        editorData.nodes[nid].inputs.num1.connections.push({
+          node: pid,
+          output: "num",
+          data: {},
+        });
+        editorData.nodes[pid].outputs.num.connections.push({
+          node: nid,
+          input: "num1",
+          data: {},
+        });
+      }
+  
+      await editor.fromJSON(editorData);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+  
+      // ===========
+      await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
+      //=============
+      await editor.trigger("arrange", {node: editor.nodes[0]});
+      await publish("positionReset");
     }
-
-    await editor.fromJSON(editorData);
-    await engine.abort();
-    await engine.process(editor.toJSON());
-
-    // ===========
-    await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
-    //=============
-    await editor.trigger("arrange", {node: editor.nodes[0]});
-    await publish("positionReset");
+    
   });
   // event to remove node BFS traversal
   subscribe("delete node", async ({detail}) => {
@@ -498,6 +507,7 @@ let doarrange;
 }
 
 export function useRete(data) {
+  console.log("inside useRete",data);
   const [container, setContainer] = useState(null);
   const editorRef = useRef();
 
@@ -508,7 +518,20 @@ export function useRete(data) {
       });
     }
   }, [container]);
+  useEffect(() => {
+  let editorData=editorRef.current;
 
+
+      for( let option in data.options.nodes){
+        publish("add node",data.options.nodes[option]);
+            
+    }
+
+  // editorData.nodes.forEach((node)=>{
+
+  // })
+  }, [data]);
+  
   useEffect(() => {
     return () => {
       if (editorRef.current) {

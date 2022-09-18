@@ -4,6 +4,7 @@ import {useRete} from "./rete.js";
 
 function Editor({data}) {
   const [setContainer] = useRete(data);
+  console.log("inside flowbuilder",data);
   return (
     <>
       <div
@@ -30,6 +31,7 @@ subscribe("catchPosition", async ({detail}) => {
     super(props);
   }
  render(){
+  
   this.renderArrow = function (fromNodeId, toNodeId, data) {
     publish("renderArrow", {fromNodeId, toNodeId, data});
   }

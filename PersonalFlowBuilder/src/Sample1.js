@@ -46,8 +46,26 @@ export default function Sample1() {
   };
 
 const [options, setOptions] = useState(defaultOptions);
-
+const handleclick=()=>{
+  setOptions((curr)=>{
+    return {nodes:{...curr.nodes, "basz": {
+      nodeId: "basz",
+      title:"node 4 ",
+      meta: {
+          // any data you need to render this node. Should be as minimal as possible and all optional.
+          // if e.g. x & y are not present, your component must count it's position and set this meta data to node
+          x: 300,
+          y: 300,
+        },
+      options: {},
+      parentNodeId: "foo",
+    }}}
+  });
+}
   return (
+  <>
+    <button type="button" onClick={handleclick}>to add node </button>
+    {console.log("this is --->",options)}
     <div style={{width: 1500, height: 900, background: "#FAFAFA"}}>
       <FlowBuilder
         theme={{
@@ -78,5 +96,6 @@ const [options, setOptions] = useState(defaultOptions);
         options={options}
       />
     </div>
-  );
+    </>
+    );
  }
