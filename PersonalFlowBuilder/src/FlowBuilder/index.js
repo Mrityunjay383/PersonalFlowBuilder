@@ -10,7 +10,6 @@ function Editor({data}) {
       <div
         style={{
           backgroundColor: "inherit",
-       
         }}
         ref={(ref) => ref && setContainer(ref)}
       ></div>

@@ -1,27 +1,9 @@
-import { useState } from "react";
+import {  useState } from "react";
 import React from "react";
 import FlowBuilder from "./FlowBuilder";
 // import "./App.css"
 export default function Sample1() {
-  let defaultRenderNodes = {
-    "bar": {
-      // this is the component inside node body which we want
-      controls: () => {
-        return (
-          <div>
-            <button
-              onClick={() => {
-                console.log("sending email ---->");
-              }}
-              type="button"
-            >
-              Send Email
-            </button>
-          </div>
-        );
-      },
-    },
-  };
+
   let defaultOptions = {
     nodes: {
       foo: {
@@ -61,32 +43,11 @@ export default function Sample1() {
         parentNodeId: "foo",
       },
     },
+  
   };
-const renderClick=()=>{
-  setRenderNodes((curr)=>{
-      return {
-        ...curr, "foo": {
-          // this is the component inside node body which we want
-          controls: () => {
-            return (
-              <div>
-                <button
-                  onClick={() => {
-                    console.log(" State Change");
-                  }}
-                  type="button"
-                >
-                  random
-                </button>
-              </div>
-            );
-          },
-        },
-      }
-  })
-}
+
   const [options, setOptions] = useState(defaultOptions);
-  const [rendernodes,setRenderNodes]=useState(defaultRenderNodes);
+  
   const handleclick = () => {
     setOptions((curr) => {
       return {
@@ -112,14 +73,8 @@ const renderClick=()=>{
   return (
     <>
       <button type="button" onClick={handleclick}>
-        
-        to add node
+        to add node 
       </button>
-      <button type="button" onClick={renderClick}>
-        
-        render node 
-      </button>
-      {console.log("this is --->", rendernodes)}
       <div style={{ width: 1500, height: 900, background: "#FAFAFA" }}>
         <FlowBuilder
           theme={{
@@ -130,7 +85,9 @@ const renderClick=()=>{
               strokeWidth: "3px",
             },
           }}
-          rendernodes={rendernodes}
+          rendernodes={(nodeId) => {
+            return (<div><button type="button">{nodeId}</button></div>)
+          }}
           options={options}
         />
       </div>

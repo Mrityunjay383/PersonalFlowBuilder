@@ -147,52 +147,14 @@ export async function createEditor(container, data) {
       }
     });
   });
-  subscribe("add control",({detail})=>{
-    let Edata=editor.toJSON();
-    let id=detail;
-   let  spcomponent;
-    if(data.rendernodes[id]){
-      spcomponent=()=>(
-        data.rendernodes[id].controls()
-        ); 
-    }
-    else{
-      spcomponent=()=>(
-        <></>
-        ); 
-  
-    }
-   console.log("tjosonskfd====",data.rendernodes);
-   for(let x in data.rendernodes){
-    if(id!==x){
-      editor.nodes.forEach(element => {
-        if(id==element.id){
-      element.controls.set("preview",new NumControl(edi,spcomponent, "preview", element, true))
-        }
-      });  
-    }
-   }
 
-   engine.abort()
-   engine.process();
-     
-    
-  })
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
 
   let  spcomponent;
-  if(data.rendernodes[node.id]){
-    spcomponent=()=>(
-      data.rendernodes[node.id].controls()
+    spcomponent=()=>( 
+      data.rendernodes(node.id)
       ); 
-  }
-  else{
-    spcomponent=()=>(
-      <></>
-      ); 
-
-  }
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
   
@@ -342,10 +304,9 @@ let doarrange;
       var newnode = await components2.createNode();
       newnode.position = [100, 0];
       newnode.data.preview=detail.title;
+      newnode.id=detail.nodeId;
       editor.addNode(newnode);
       let editorD = editor.toJSON();
-  
-      editorD.nodes[1].id = detail.nodeId;
       await editor.fromJSON(editorD);
       await engine.abort();
       await engine.process(editor.toJSON());
@@ -549,11 +510,6 @@ export function useRete(data) {
     }
     console.log("called along with whole editor")
   }, [container]);
-  useEffect(() => {
-    for(let n in data.rendernodes){
-       publish("add control",n)
-    }
-  }, [data.rendernodes])
   
   useEffect(() => {
   let editorData=editorRef.current;

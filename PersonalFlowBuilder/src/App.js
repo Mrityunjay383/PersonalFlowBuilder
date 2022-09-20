@@ -5,8 +5,6 @@ import "./App.css";
 import Flowbuilder from './FlowBuilder'
 function App() {
   
-  
-  
   let flowRef = useRef(null);
   let flowManager ;
   
@@ -69,7 +67,7 @@ function App() {
       console.log("node drag end", detail);
     });
   }
-    node1 = {
+   node1  = {
       nodeId: "node-4",
       title:"new added node ",
       type: "email",
