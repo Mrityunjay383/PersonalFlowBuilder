@@ -153,7 +153,7 @@ function App() {
       <button
         type="button"
         onClick={async () => {
-          let d = await flowManager.position.getPosition(); // return  x, y, zoom
+          let d =  flowManager.position.get(); // return  x, y, zoom
           console.log("here u go --->", d);
         }}
       >

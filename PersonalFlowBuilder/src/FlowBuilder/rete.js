@@ -19,18 +19,9 @@ numSocket.combineWith(anyTypeSocket);
 // Nodes components class
 class NumControl extends Rete.Control {
 
-  // static component = ({ value, onChange }) => (
-  //   <input
-  //     type="button"
-  //     value="Add Template"
-  //     ref={(ref) => {
-  //       ref && ref.addEventListener("pointerdown", (e) => e.stopPropagation());
-  //     }}
-  //     onClick={(e) => {
-  //       onChange(value + 1);
-  //     }}
-  //   />
-  // );
+  static componentw = () => (
+    <h1>ddddd</h1>
+  );
 
   constructor(emitter, component,key, node, readonly = false) {
 
@@ -153,7 +144,7 @@ export async function createEditor(container, data) {
 
   let  spcomponent;
     spcomponent=()=>( 
-      data.rendernodes(node.id)
+      data.rendernodes(node,node.id,node.data.preview)
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )

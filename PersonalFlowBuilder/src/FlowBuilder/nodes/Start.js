@@ -1,14 +1,14 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
 import {publish} from "../events";
-
+import "./nodes.css"
 export class MyNode extends Node {
   render() {
     const {node, bindSocket, bindControl} = this.props;
     const {outputs, controls, inputs, selected} = this.state;
 
     return (
-      <div
+      <div style={{border:"none" ,background:"inherit", }}
         draggable={true}
         onMouseDown={(e) => {
           publish("node.mouse.down", e);
@@ -34,7 +34,7 @@ export class MyNode extends Node {
         <div className={ `flowBuilder_${node.id}_title`} >
 
           {/* <img className="playIcon" src={playIcon}/>  */}
-          {node.data.preview}
+          {/* {node.data.preview} */}
 
         </div>
         {/* Outputs */}
@@ -48,30 +48,9 @@ export class MyNode extends Node {
             innerRef={bindControl}
           />
         ))}
-        {/* Inputs */}
-        {inputs.map((input) => (
-          <div className="input" key={input.key}>
-            <Socket
-              style={{backgroundColor: "red"}}
-              type="input"
-              socket={input.socket}
-              io={input}
-              innerRef={bindSocket}
-            />
-            {!input.showControl() && (
-              <div className="input-title">{input.name}</div>
-            )}
-            {input.showControl() && (
-              <Control
-                className="input-control"
-                control={input.control}
-                innerRef={bindControl}
-              />
-            )}
-          </div>
-        ))}
+      
         {outputs.map((output) => (
-          <div className="output" key={output.key}>
+          <div   className="output" key={output.key}>
             <Socket
               type="output"
               socket={output.socket}

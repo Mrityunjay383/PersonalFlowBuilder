@@ -1,14 +1,14 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
 import {publish} from "../events";
-
+import "./nodes.css"
 export class Action extends Node {
   render() {
     const {node, bindSocket, bindControl} = this.props;
     const {outputs, controls, inputs} = this.state;
 
     return (
-      <div
+      <div style={{border:"none" ,background:"inherit"}}
         draggable
         onMouseDown={(e) => {
           publish("node.mouse.down", e);
@@ -32,18 +32,22 @@ export class Action extends Node {
       >
         {/* Inputs */}
         {inputs.map((input) => (
-          <div className=" flowBuilder_${node.id}_title " key={input.key}>
+          <>
+          <div style={{display:"flex"}} className=" flowBuilder_${node.id}_title " key={input.key}>
+          <div style={{visibility:"hidden"}}>
             <Socket
               type="input"
               socket={input.socket}
               io={input}
               innerRef={bindSocket}
             />
-            {/* <img alt="playicon" className="playIcon" src={playIcon}/> */}
-            {node.data.preview}
+            
           </div>
-        ))}
-
+            
+          </div>
+          </>
+            ))}
+        {console.log("=====>",controls)}
         {/* Controls  */}
         {controls.map((control) => (
           <Control
@@ -55,7 +59,7 @@ export class Action extends Node {
         ))}
 
         {outputs.map((output) => (
-          <div className="output" key={output.key}>
+          <div  className="output" style ={{visibility: "hidden"}}key={output.key}>
           
             <Socket
               type="output"

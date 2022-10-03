@@ -1,0 +1,14 @@
+.socket{
+    position:absolute !important;
+  }
+
+.output {
+  all:unset ;
+  right: 16.7%;
+  top:10%;
+  }
+  .input {
+    all:unset ;
+    left: 16.7%;
+    top:10%;
+    }

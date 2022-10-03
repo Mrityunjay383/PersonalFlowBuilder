@@ -42,9 +42,9 @@ subscribe("catchPosition", async ({detail}) => {
       console.log("setposition called", x, y, zoom);
       publish("setPosition", {x, y, zoom});
     },
-    getPosition: async function () {
+    get:  function () {
 
-      await publish("getPosition");
+       publish("getPosition");
 
       return {x, y, zoom};
     },
