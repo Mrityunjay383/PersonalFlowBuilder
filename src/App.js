@@ -1,74 +1,108 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import "./App.css";
 
-import FLow from "./FlowBuilder/Flow";
-
+import FlowBuilder from './FlowBuilder'
 function App() {
-  let flowRef = useRef(FLow());
-  let flowManager = flowRef.current;
 
-  flowManager.on("node.click", ({detail}) => {
-    let event, node, options;
-    event = detail.e; // pointer event
-    node = detail.node; // value of node which is selected
-    options = detail.accumulate; // boolean value
-    console.log("====================================");
-    console.log("node.click is triggered on", {
-      event: event,
-      node: node,
-      options: options,
+  let flowRef = useRef(null);
+  let flowManager ;
+
+  let node1;
+  console.log("to see what we get ===>",FlowBuilder)
+  // this use Effect ensures that on initial render ref value i null so no code should run
+  // useEffect(() => {
+    if (flowRef.current) {
+      flowManager = flowRef.current;
+      console.log("runs assigne--",flowManager);
+    }
+
+    if (flowManager) {
+    flowManager.on("node.click", ({detail}) => {
+      let event, node, options;
+      event = detail.e; // pointer event
+      node = detail.node; // value of node which is selected
+      options = detail.accumulate; // boolean value
+      console.log("====================================");
+      console.log("node.click is triggered on", {
+        event: event,
+        node: node,
+        options: options,
+      });
+      console.log("====================================");
     });
-    console.log("====================================");
-  });
-  flowManager.on("node.added", ({detail}) => {
-    console.log("nodes is added====>", detail);
-  });
-  flowManager.on("node.removed", ({detail}) => {
-    console.log("node is removed===>", detail);
-  });
-  flowManager.on("loaded", ({detail}) => {
-    console.log("====================================");
-    console.log("document is fully loaded ", detail);
-    console.log("====================================");
-  });
-  flowManager.on("position.changed", ({detail}) => {
-    console.log("canvas position is changed", detail);
-  });
-  flowManager.on("node.mouse.over", ({detail}) => {
-    console.log("mouse over");
-  });
-  flowManager.on("node.mouse.out", ({detail}) => {
-    console.log("mouse out");
-  });
-  flowManager.on("node.mouse.down", ({detail}) => {
-    console.log("mouse down");
-  });
-  flowManager.on("node.mouse.up", ({detail}) => {
-    console.log("mouse up");
-  });
-  flowManager.on("node.position_changed", ({detail}) => {
-    console.log("node position changed-->", detail);
-  });
-  flowManager.on("node.drag.start", ({detail}) => {
-    console.log("node drag start", detail);
-  });
-  flowManager.on("node.drag.end", ({detail}) => {
-    console.log("node drag end", detail);
-  });
-  const node1 = {
-    nodeId: "node-4",
-    title:"new added node ",
-    type: "email",
-    options: {},
-    parentNodeId: "node-2",
-    meta: {
-      // any data you need to render this node. Should be as minimal as possible and all optional.
-      // if e.g. x & y are not present, your component must count it's position and set this meta data to node
-      x: 700,
-      y: 100,
-    },
-  };
+    flowManager.on("node.added", ({detail}) => {
+      console.log("nodes is added====>", detail);
+    });
+    flowManager.on("node.removed", ({detail}) => {
+      console.log("node is removed===>", detail);
+    });
+    flowManager.on("loaded", ({detail}) => {
+      console.log("====================================");
+      console.log("document is fully loaded ", detail);
+      console.log("====================================");
+    });
+    flowManager.on("position.changed", ({detail}) => {
+      console.log("canvas position is changed", detail);
+    });
+    flowManager.on("node.mouse.over", ({detail}) => {
+      console.log("mouse over");
+    });
+    flowManager.on("node.mouse.out", ({detail}) => {
+      console.log("mouse out");
+    });
+    flowManager.on("node.mouse.down", ({detail}) => {
+      console.log("mouse down");
+    });
+    flowManager.on("node.mouse.up", ({detail}) => {
+      console.log("mouse up");
+    });
+    flowManager.on("node.position_changed", ({detail}) => {
+      console.log("node position changed-->", detail);
+    });
+    flowManager.on("node.drag.start", ({detail}) => {
+      console.log("node drag start", detail);
+    });
+    flowManager.on("node.drag.end", ({detail}) => {
+      console.log("node drag end", detail);
+    });
+  }
+   node1  = {
+      nodeId: "node-4",
+      title:"new added node ",
+      type: "email",
+      options: {},
+      parentNodeId: "node-2",
+
+      meta: {
+        // any data you need to render this node. Should be as minimal as possible and all optional.
+        // if e.g. x & y are not present, your component must count it's position and set this meta data to node
+        x: 700,
+        y: 100,
+      },
+
+    };
+  // }, );
+  const [nodestorender,setnodestorender]=useState(
+    { "node-1":{
+      controls:()=>{
+        return (
+         <div>
+         <button
+         onClick={()=>{
+          console.log("click hogya miracle ---->")
+         }}type="button">
+         miracle
+        </button>
+        </div>
+        )
+    }
+  }}
+  );
+
+
+
+
   return (
     <div className="App">
       <h1>This is a the flow Component</h1>
@@ -76,7 +110,26 @@ function App() {
       <button
         type="button"
         onClick={async () => {
+          console.log("----->",nodestorender);
+          setnodestorender((curr)=>{
+            return {...curr,"node-4":{
+              controls:()=>{
+                return (
+                 <div>
+                 <button
+                 onClick={()=>{
+                  console.log("click hogya miracle 4---->")
+                 }}type="button">
+                 miracle 4
+                </button>
+                </div>
+                )
+            }
+            }}
+          })
+         console.log("this is loggin the changed data of flowManager",nodestorender)
           flowManager.nodes.add(node1);
+
         }}
       >
         add node
@@ -142,7 +195,8 @@ function App() {
       >
         renderArrow
       </button>
-      <FLow
+      <FlowBuilder
+      ref={flowRef}
         theme={{
           whitespaceAroundNode: 75,
           arrow: {
@@ -151,39 +205,7 @@ function App() {
             strokeWidth: "3px",
           },
         }}
-        rendernodes={
-          {
-           "node-1":{
-            controls:()=>{ 
-              return (
-               <div> 
-               <button 
-               onClick={()=>{
-                console.log("click hogya miracle ---->")
-               }}type="button">
-               miracle
-              </button>
-              </div>
-              )
-          }
-        },
-        "node-4":{
-          controls:()=>{ 
-            return (
-             <div> 
-             <button 
-             onClick={()=>{
-              console.log("click hogya miracle 4---->")
-             }}type="button">
-             miracle 4
-            </button>
-            </div>
-            )
-        }
-        }
-
-        }
-      }
+        rendernodes={nodestorender}
         options={{
           // all canvas position. If not set - reset to default position so all nodes would be visible.
           position: {x: 1, y: 1, zoom: 1},

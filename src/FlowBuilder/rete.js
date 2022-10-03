@@ -9,8 +9,8 @@ import ContextMenuPlugin from "rete-context-menu-plugin";
 import ReactRenderPlugin from "rete-react-render-plugin";
 
 import {publish, subscribe} from "./events";
-import {Action} from "./Node";
-import {MyNode} from "./Start";
+import {Action} from "./nodes/Node";
+import {MyNode} from "./nodes/Start";
 
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
@@ -147,23 +147,14 @@ export async function createEditor(container, data) {
       }
     });
   });
-  
+
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
 
-
   let  spcomponent;
-  if(data.rendernodes[node.id]){
-    spcomponent=()=>(
-      data.rendernodes[node.id].controls()
+    spcomponent=()=>( 
+      data.rendernodes(node.id)
       ); 
-  }
-  else{
-    spcomponent=()=>(
-      <></>
-      ); 
-
-  }
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
   
@@ -198,6 +189,7 @@ export async function createEditor(container, data) {
     }
   });
 
+  
   editor.use(AutoArrangePlugin, {margin: {x: 50, y: 50}, depth: 100});
   let obj = document.querySelectorAll("path");
   //  obj.style.stroke=data.theme.fill;
@@ -205,7 +197,7 @@ export async function createEditor(container, data) {
 
   editor.register(components);
   editor.register(components2);
-
+let doarrange;
   for(let node in nodes) {
     let createNode;
     if (nodes[node].parentNodeId === "") {
@@ -214,9 +206,15 @@ export async function createEditor(container, data) {
       createNode = await components2.createNode();
     }
   
+    doarrange=1;
+    if( nodes[node].meta.x && nodes[node].meta.y){
     createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
-    // editor.addNode(createNode);
-
+    doarrange=0;
+  }
+  else{
+    createNode.position=[100,100];
+  }
+  
 
     let editorData = editor.toJSON();
     editorData.nodes[id_no]=createNode;
@@ -228,6 +226,10 @@ export async function createEditor(container, data) {
     await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
+   
+  }
+  if(doarrange){
+     await editor.trigger("arrange", {node: editor.nodes[0]});
   }
 
   // making custom connections passed by options object in Flowmanager
@@ -292,41 +294,49 @@ export async function createEditor(container, data) {
 
   // event of add node
   subscribe("add node", async ({detail}) => {
-    var newnode = await components2.createNode();
-    newnode.position = [100, 0];
-    newnode.data.preview=detail.title;
-    editor.addNode(newnode);
-    let editorD = editor.toJSON();
-
-    editorD.nodes[1].id = detail.nodeId;
-    await editor.fromJSON(editorD);
-    await engine.abort();
-    await engine.process(editor.toJSON());
-    let editorData = editor.toJSON();
-    if (detail.parentNodeId != "") {
-      const nid = detail.nodeId;
-      const pid = detail.parentNodeId;
-      editorData.nodes[nid].inputs.num1.connections.push({
-        node: pid,
-        output: "num",
-        data: {},
-      });
-      editorData.nodes[pid].outputs.num.connections.push({
-        node: nid,
-        input: "num1",
-        data: {},
-      });
+    let flag=1;
+    editor.nodes.forEach((n)=>{
+      if(n.id===detail.nodeId){
+        flag=0;
+      }
+    });
+    if(flag){
+      var newnode = await components2.createNode();
+      newnode.position = [100, 0];
+      newnode.data.preview=detail.title;
+      newnode.id=detail.nodeId;
+      editor.addNode(newnode);
+      let editorD = editor.toJSON();
+      await editor.fromJSON(editorD);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+      let editorData = editor.toJSON();
+      if (detail.parentNodeId != "") {
+        const nid = detail.nodeId;
+        const pid = detail.parentNodeId;
+        editorData.nodes[nid].inputs.num1.connections.push({
+          node: pid,
+          output: "num",
+          data: {},
+        });
+        editorData.nodes[pid].outputs.num.connections.push({
+          node: nid,
+          input: "num1",
+          data: {},
+        });
+      }
+  
+      await editor.fromJSON(editorData);
+      await engine.abort();
+      await engine.process(editor.toJSON());
+  
+      // ===========
+      await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
+      //=============
+      await editor.trigger("arrange", {node: editor.nodes[0]});
+      await publish("positionReset");
     }
-
-    await editor.fromJSON(editorData);
-    await engine.abort();
-    await engine.process(editor.toJSON());
-
-    // ===========
-    await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
-    //=============
-    await editor.trigger("arrange", {node: editor.nodes[0]});
-    await publish("positionReset");
+    
   });
   // event to remove node BFS traversal
   subscribe("delete node", async ({detail}) => {
@@ -411,6 +421,7 @@ export async function createEditor(container, data) {
   subscribe("nodesPositionReset", () => {
     editor.trigger("arrange", {node: editor.nodes[0]});
   });
+  
   subscribe("resetEverything", async () => {
     let data = editor.toJSON();
     data.nodes = {};
@@ -424,8 +435,11 @@ export async function createEditor(container, data) {
       } else {
         createNode = await components2.createNode();
       }
-    
+     doarrange=1;
+      if( nodes[node].meta.x && nodes[node].meta.y){
       createNode.position = [nodes[node].meta.x, nodes[node].meta.y];
+      doarrange=0;
+    }
       // editor.addNode(createNode);
   
   
@@ -439,6 +453,9 @@ export async function createEditor(container, data) {
       await editor.fromJSON(editorData);
       await engine.abort();
       await engine.process(editor.toJSON());
+    }
+    if(doarrange){
+      editor.trigger("arrange", {node: editor.nodes[0]});
     }
 
     //  // making helper obj for making connections based on custom data
@@ -481,6 +498,7 @@ export async function createEditor(container, data) {
 }
 
 export function useRete(data) {
+  console.log("inside useRete",data);
   const [container, setContainer] = useState(null);
   const editorRef = useRef();
 
@@ -490,7 +508,19 @@ export function useRete(data) {
         editorRef.current = value;
       });
     }
+    console.log("called along with whole editor")
   }, [container]);
+  
+  useEffect(() => {
+  let editorData=editorRef.current;
+
+      for( let option in data.options.nodes){
+        publish("add node",data.options.nodes[option]);
+            
+    }
+  // editorData.nodes.forEach((node)=>{
+  // })
+  }, [data.options.nodes]);
 
   useEffect(() => {
     return () => {

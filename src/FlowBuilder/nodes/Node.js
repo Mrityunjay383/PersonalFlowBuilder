@@ -1,7 +1,6 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
-import {publish} from "./events";
-import playIcon from "./images/playIcon.svg";
+import {publish} from "../events";
 
 export class Action extends Node {
   render() {
@@ -29,11 +28,11 @@ export class Action extends Node {
         onDragEnd={(d) => {
           publish("node.drag.end", d);
         }}  
-        className={`node   FlowbBuilder_${node.id}`}
+        className={`node    flowBuilder_${node.id}`}
       >
         {/* Inputs */}
         {inputs.map((input) => (
-          <div className="FlowbBuilder_${node.id}_title " key={input.key}>
+          <div className=" flowBuilder_${node.id}_title " key={input.key}>
             <Socket
               type="input"
               socket={input.socket}
