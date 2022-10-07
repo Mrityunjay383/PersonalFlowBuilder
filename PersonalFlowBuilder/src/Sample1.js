@@ -45,7 +45,7 @@ export default function Sample1() {
     },
   };
   let node1 = {
-    nodeId: "node-4",
+    nodeId: "node-5",
     title: "new added node ",
     type: "email",
     options: {},
@@ -54,8 +54,8 @@ export default function Sample1() {
     meta: {
       // any data you need to render this node. Should be as minimal as possible and all optional.
       // if e.g. x & y are not present, your component must count it's position and set this meta data to node
-      x: 700,
-      y: 100,
+      x: 100,
+      y: 700,
     },
   };
 
@@ -190,10 +190,18 @@ export default function Sample1() {
         <button
           type="button"
           onClick={() => {
-            flowManager.nodes.add(node1);
+            flowManager.nodes.add({node1});
           }}
         >
           adding node method
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            flowManager.nodes.remove({nodeId:"node-3"});
+          }}
+        >
+          removing node method
         </button>
       </div>
       <div style={{ width: 900, height: 600, background: "#D4FAB6" }}>

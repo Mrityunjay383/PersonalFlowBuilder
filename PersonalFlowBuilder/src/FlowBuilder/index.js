@@ -60,11 +60,11 @@ constructor(props=propsStructure) {
     }
   }
   this.nodes= {
-    add: function (node) {
+    add: function ({node}) {
       publish("add node", node);
     },
-    remove: function (nodeId) {
-      publish("delete node", nodeId);
+    remove: function ({nodeId}) {
+      publish("delete node", {detail:nodeId});
     },
     reset: function () {
       publish("nodesPositionReset");

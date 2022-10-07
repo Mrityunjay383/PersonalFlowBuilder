@@ -253,7 +253,7 @@ let doarrange;
   );
 let instNode;
   editor.on("translate", (data) => {
-    const ndata={x:data.x,y:data.y,zoom:data.transform.k,options:OPTIONS};
+    const ndata={options:{position:{x:data.x,y:data.y,zoom:data.transform.k,}}};
     publish("position.changed", ndata);
   });
   let run = 0;
@@ -293,12 +293,13 @@ let instNode;
     if(flag){
       var newnode = await components2.createNode();
       newnode.position = [100, 0];
+      console.log("title===",title)
       newnode.data.preview=title;
       newnode.id=nodeId;
+
       editor.addNode(newnode);
       let editorD = editor.toJSON();
       await editor.fromJSON(editorD);
-      await engine.abort();
       await engine.process(editor.toJSON());
       let editorData = editor.toJSON();
       if (parentNodeId != "") {
@@ -330,12 +331,12 @@ let instNode;
     
   });
   // event to remove node BFS traversal
-  subscribe("delete node", async ({nodeId}) => {
+  subscribe("delete node", async ({detail}) => {
     let editorData = editor.toJSON();
-    let todeletNode = editorData.nodes[nodeId];
+    let todeletNode = editorData.nodes[detail];
     let queue = [];
-    queue.push(nodeId);
-    let pnode = editorData.nodes[nodeId].inputs.num1.connections;
+    queue.push(detail);
+    let pnode = editorData.nodes[detail].inputs.num1.connections;
     let pid;
     let pconnections = [];
     if (pnode.length > 0) {
@@ -355,7 +356,7 @@ let instNode;
       });
     }
 
-    pconnections = pconnections.filter((c) => c.node != nodeId);
+    pconnections = pconnections.filter((c) => c.node != detail);
 
     pconnections.forEach((c) => {
       // maybe will try by checking if need is there to push or duplicacy is present
