@@ -2,29 +2,26 @@ function subscribe(eventName, listener) {
   document.addEventListener(eventName, listener);
 }
 
-async function subscribeDReturn(eventName, event2, listener) {
-  document.addEventListener(eventName, listener);
-  const d = await listener();
-  const event = new CustomEvent("catchPosition", {detail: d});
-  console.log(event);
-  document.dispatchEvent(event);
-}
-
 function unsubscribe(eventName, listener) {
   document.removeEventListener(eventName, listener);
 }
 
 function publish(eventName, data) {
-  const event = new CustomEvent(eventName, {detail: data});
+  let event = new CustomEvent(eventName);
+  for(let key in data){
+    event[key]=data[key];
+  }
   document.dispatchEvent(event);
+
 }
+
+
 
 function publishedReturn(eventName, data) {
   const event = new CustomEvent(eventName, {detail: data});
-  console.log("====================================");
-  console.log(event);
-  console.log("====================================");
+  event.event=data.event;
+  event.node=data.node;
   document.dispatchEvent(event);
 }
 
-export {publish, subscribe, unsubscribe, subscribeDReturn, publishedReturn};
+export {publish, subscribe, unsubscribe, publishedReturn};

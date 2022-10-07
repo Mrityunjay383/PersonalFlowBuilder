@@ -8,7 +8,7 @@ import ConnectionPlugin from "rete-connection-plugin";
 import ContextMenuPlugin from "rete-context-menu-plugin";
 import ReactRenderPlugin from "rete-react-render-plugin";
 
-import {publish, subscribe} from "./events";
+import {publish, publishTest, subscribe} from "./events";
 import {Action} from "./nodes/Node";
 import {MyNode} from "./nodes/Start";
 
@@ -93,10 +93,10 @@ function incId(id_no) {
 
 // mainn function for all  functionalities of Module
 export async function createEditor(container, data) {
+  let OPTIONS=data.options;
   let nodes = data.options.nodes;
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
-    console.log(components);
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
 
 
@@ -113,7 +113,7 @@ export async function createEditor(container, data) {
   });
 
   // event called by method of renderArrow
-  subscribe("renderArrow", ({detail}) => {
+  subscribe("renderArrow", ({fromNodeId,toNodeId,data}) => {
     let connections = editor.view.connections;
 
     connections.forEach((connection) => {
@@ -122,8 +122,8 @@ export async function createEditor(container, data) {
       fromNodeId = connection.connection.output.node.id;
       let v;
 
-      if (fromNodeId === detail.fromNodeId && toNodeId === detail.toNodeId) {
-        v = detail.data;
+      if (fromNodeId === fromNodeId && toNodeId === toNodeId) {
+        v = data;
 
         let {fill, stroke, strokeWidth} = v;
 
@@ -149,10 +149,7 @@ export async function createEditor(container, data) {
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
   
-})
-  // editor.on("rendercontrol",({ el, control })=>{
-  //   console.log("rendering control==>",{ el, control })
-  // })
+});
 
   editor.on("renderconnection", ({el, connection, points}) => {
     let fromNodeId, toNodeId;
@@ -211,8 +208,6 @@ let doarrange;
     editorData.nodes[id_no]=createNode;
     editorData.nodes[id_no].id = nodes[node].nodeId;
     editorData.nodes[id_no].data.preview=nodes[node].title;
-    console.log(editorData.nodes);
-    console.log(editor);
     incId(id_no);
     await editor.fromJSON(editorData);
     await engine.abort();
@@ -256,55 +251,59 @@ let doarrange;
       await engine.process(editor.toJSON());
     },
   );
-
+let instNode;
   editor.on("translate", (data) => {
-    publish("position.changed", data);
+    const ndata={x:data.x,y:data.y,zoom:data.transform.k,options:OPTIONS};
+    publish("position.changed", ndata);
   });
   let run = 0;
   editor.on("nodetranslate", (data) => {
     if (run === 0) {
-      publish("node.drag.start", data);
+      publish("node.drag.start", {node:data.node,event:{...data,type:"dragstart"},options:OPTIONS});
       run++;
     } else {
-      publish("node.position_changed", data);
+      publish("node.position_changed", {node:data.node,event:data,options:OPTIONS});
     }
   });
   editor.on("nodedraged", (data) => {
     run = 0;
-    publish("node.drag.end", data);
+    publish("node.drag.end", {node:data,event:{type:"dragend"},options:OPTIONS});
   });
   editor.on("selectnode", (data) => {
-    publish("node.click", data); // call node.click
+    let ndata={event:data.e,node:data.node,options:OPTIONS};//OPTIONS which we have from users 
+    publish("node.click", ndata); // call node.click
+    
   });
   // when window gets loaded
   window.addEventListener("load", (d) => {
-    publish("loaded", d);
+    const ndata={options:OPTIONS};
+    publish("loaded", ndata);
   });
 
   ///customisation event driven programming =======.......
 
   // event of add node
-  subscribe("add node", async ({detail}) => {
+  subscribe("add node", async ({nodeId,title,parentNodeId }) => {
     let flag=1;
     editor.nodes.forEach((n)=>{
-      if(n.id===detail.nodeId){
+      if(n.id===nodeId){
         flag=0;
       }
     });
     if(flag){
       var newnode = await components2.createNode();
       newnode.position = [100, 0];
-      newnode.data.preview=detail.title;
-      newnode.id=detail.nodeId;
+      newnode.data.preview=title;
+      newnode.id=nodeId;
       editor.addNode(newnode);
       let editorD = editor.toJSON();
       await editor.fromJSON(editorD);
       await engine.abort();
       await engine.process(editor.toJSON());
       let editorData = editor.toJSON();
-      if (detail.parentNodeId != "") {
-        const nid = detail.nodeId;
-        const pid = detail.parentNodeId;
+      if (parentNodeId != "") {
+        const nid = nodeId;
+        const pid = parentNodeId;
         editorData.nodes[nid].inputs.num1.connections.push({
           node: pid,
           output: "num",
@@ -322,7 +321,8 @@ let doarrange;
       await engine.process(editor.toJSON());
   
       // ===========
-      await publish("node.added", editorD.nodes[1]); // publishing for subscribed event node.added
+      const nd={node:editorD.nodes[nodeId],options:OPTIONS};
+      await publish("node.added", nd ); // publishing for subscribed event node.added
       //=============
       await editor.trigger("arrange", {node: editor.nodes[0]});
       await publish("positionReset");
@@ -330,12 +330,12 @@ let doarrange;
     
   });
   // event to remove node BFS traversal
-  subscribe("delete node", async ({detail}) => {
+  subscribe("delete node", async ({nodeId}) => {
     let editorData = editor.toJSON();
-    let todeletNode = editorData.nodes[detail];
+    let todeletNode = editorData.nodes[nodeId];
     let queue = [];
-    queue.push(detail);
-    let pnode = editorData.nodes[detail].inputs.num1.connections;
+    queue.push(nodeId);
+    let pnode = editorData.nodes[nodeId].inputs.num1.connections;
     let pid;
     let pconnections = [];
     if (pnode.length > 0) {
@@ -355,7 +355,7 @@ let doarrange;
       });
     }
 
-    pconnections = pconnections.filter((c) => c.node != detail);
+    pconnections = pconnections.filter((c) => c.node != nodeId);
 
     pconnections.forEach((c) => {
       // maybe will try by checking if need is there to push or duplicacy is present
@@ -372,19 +372,19 @@ let doarrange;
     await engine.abort();
     await engine.process(editor.toJSON());
     // ===========
-    publish("node.removed", todeletNode); // publishing for subscribed event node.removed
+    publish("node.removed", {node:todeletNode,options:OPTIONS}); // publishing for subscribed event node.removed
     //=============
   });
 
   // to setPosition of canva
-  subscribe("setPosition", async ({detail}) => {
-    let x = detail.x;
-    let y = detail.y;
-    let k = detail.zoom;
+  subscribe("setPosition", async ({x,y,zoom}) => {
+    
+    
+    
     const {area} = editor.view;
     area.transform.x = x;
     area.transform.y = y;
-    area.transform.k = k;
+    area.transform.k = zoom;
     area.update();
   });
   let posx, posy, zoom;
@@ -394,7 +394,7 @@ let doarrange;
     posx = area.transform.x;
     posy = area.transform.y;
     zoom = area.transform.k;
-    publish("catchPosition", {x: posx, y: posy, zoom});
+    publish("catchPosition", {x1: posx, y1: posy, zoom1:zoom});
     //  if(1){
     //   await
     //  }
@@ -438,8 +438,6 @@ let doarrange;
       editorData.nodes[id_no]=createNode;
       editorData.nodes[id_no].id = nodes[node].nodeId;
       editorData.nodes[id_no].data.preview=nodes[node].title;
-      console.log(editorData.nodes);
-      console.log(editor);
       incId(id_no);
       await editor.fromJSON(editorData);
       await engine.abort();
@@ -489,7 +487,6 @@ let doarrange;
 }
 
 export function useRete(data) {
-  console.log("inside useRete",data);
   const [container, setContainer] = useState(null);
   const editorRef = useRef();
 
@@ -499,7 +496,6 @@ export function useRete(data) {
         editorRef.current = value;
       });
     }
-    console.log("called along with whole editor")
   }, [container]);
   
   useEffect(() => {

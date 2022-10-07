@@ -2,9 +2,10 @@ import React from "react";
 import {publish, subscribe} from "./events.js";
 import {useRete} from "./rete.js";
 
+
 function Editor({data}) {
   const [setContainer] = useRete(data);
-  console.log("inside flowbuilder",data);
+
   return (
     <>
       <div
@@ -18,15 +19,21 @@ function Editor({data}) {
 }
 
 let x, y, zoom;
-subscribe("catchPosition", async ({detail}) => {
-  x = detail.x;
-  y = detail.y;
-  zoom = detail.zoom;
+subscribe("catchPosition", async ({x1,y1,zoom1}) => {
+  x = x1;
+  y = y1;
+  zoom = zoom1
 
 });
-
+const propsStructure = {
+  theme:null,
+  options:null,
+  rendernodes:null,
+} 
  class Flowbuilder extends React.Component {
-  constructor(props) {
+
+  
+constructor(props=propsStructure) {
     super(props);
   }
  render(){
@@ -38,7 +45,7 @@ subscribe("catchPosition", async ({detail}) => {
     publish("resetEverything");
   }
   this.position ={
-    setPosition: function (x, y, zoom) {
+    setPosition: function ({x, y, zoom}) {
       console.log("setposition called", x, y, zoom);
       publish("setPosition", {x, y, zoom});
     },

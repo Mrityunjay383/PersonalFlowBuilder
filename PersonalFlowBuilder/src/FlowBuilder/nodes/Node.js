@@ -1,6 +1,6 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
-import {publish} from "../events";
+import {publish, publishedReturn} from "../events";
 import "./nodes.css"
 export class Action extends Node {
   render() {
@@ -11,28 +11,22 @@ export class Action extends Node {
       <div style={{border:"none" ,background:"inherit"}}
         draggable
         onMouseDown={(e) => {
-          publish("node.mouse.down", e);
+          publishedReturn("node.mouse.down", {event:e.nativeEvent,node});
         }}
         onMouseOver={(e) => {
-          publish("node.mouse.over", e);
+          publishedReturn("node.mouse.over", {event:e.nativeEvent,node});
         }}
         onMouseOut={(e) => {
-          publish("node.mouse.out", e);
+          publishedReturn("node.mouse.out", {event:e.nativeEvent,node});
         }}
         onMouseUp={(e) => {
-          publish("node.mouse.up", e);
+          publishedReturn("node.mouse.up", {event:e.nativeEvent,node});
         }}
-        onDragStart={(d) => {
-          publish("node.drag.start", d);
-        }}
-        onDragEnd={(d) => {
-          publish("node.drag.end", d);
-        }}  
         className={`node    flowBuilder_${node.id}`}
       >
         {/* Inputs */}
-        {inputs.map((input) => (
-          <>
+        {inputs.map((input,index) => (
+           <div key={index}>
           <div style={{display:"flex"}} className=" flowBuilder_${node.id}_title " key={input.key}>
           <div style={{visibility:"hidden"}}>
             <Socket
@@ -45,9 +39,9 @@ export class Action extends Node {
           </div>
             
           </div>
-          </>
+          </div>
             ))}
-        {console.log("=====>",controls)}
+        
         {/* Controls  */}
         {controls.map((control) => (
           <Control
