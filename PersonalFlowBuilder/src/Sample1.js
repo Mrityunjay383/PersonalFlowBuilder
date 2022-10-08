@@ -50,7 +50,6 @@ export default function Sample1() {
     type: "email",
     options: {},
     parentNodeId: "baz",
-
     meta: {
       // any data you need to render this node. Should be as minimal as possible and all optional.
       // if e.g. x & y are not present, your component must count it's position and set this meta data to node
@@ -225,11 +224,11 @@ export default function Sample1() {
             },
           }}
           options={options}
-          rendernodes={(node, nodeId, nodeTitle) => {
+          rendernodes={({node,options}) => {
             return (
               <div style={{ border: "1px solid" }}>
-                <h1>{nodeTitle}</h1>
-                <button type="button">{nodeId}</button>
+                <h1>{node.title}</h1>
+                <button type="button">{node.nodeId}</button>
               </div>
             );
           }}

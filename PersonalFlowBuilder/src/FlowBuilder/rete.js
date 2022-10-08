@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import {createRoot} from "react-dom/client";
-import Rete from "rete";
+import Rete, { Input } from "rete";
 import AreaPlugin from "rete-area-plugin";
 import AutoArrangePlugin from "rete-auto-arrange-plugin";
 import ConnectionPathPlugin from "rete-connection-path-plugin";
@@ -141,10 +141,15 @@ export async function createEditor(container, data) {
 
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
-
   let  spcomponent;
-    spcomponent=()=>( 
-      data.rendernodes(node,node.id,node.data.preview)
+  let nnode={};
+   nnode.nodeId=node.id;  
+   nnode.title=node.data.preview;
+   nnode.meta={x:node.position[0],
+  y:node.position[1]};
+ 
+  spcomponent=()=>( 
+      data.rendernodes({node:nnode,options:OPTIONS})
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
@@ -293,7 +298,6 @@ let instNode;
     if(flag){
       var newnode = await components2.createNode();
       newnode.position = [100, 0];
-      console.log("title===",title)
       newnode.data.preview=title;
       newnode.id=nodeId;
 
