@@ -444,9 +444,7 @@ let instNode;
       await engine.abort();
       await engine.process(editor.toJSON());
     }
-    if(doarrange){
-      editor.trigger("arrange", {node: editor.nodes[0]});
-    }
+    
 
     //  // making helper obj for making connections based on custom data
     //  let helperObj={};
@@ -476,6 +474,7 @@ let instNode;
         await editor.fromJSON(editorData);
         await engine.abort();
         await engine.process(editor.toJSON());
+        await editor.trigger("arrange", {node: editor.nodes[0]});
       }
     }
   });

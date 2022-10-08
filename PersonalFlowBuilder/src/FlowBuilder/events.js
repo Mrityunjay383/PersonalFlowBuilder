@@ -8,7 +8,6 @@ function unsubscribe(eventName, listener) {
 
 function publish(eventName, data) {
   let event = new CustomEvent(eventName);
-  console.log("0000==",data);
   for(let key in data){
     event[key]=data[key];
   }
@@ -17,7 +16,6 @@ function publish(eventName, data) {
 }
 function publishNode(eventName, data) {
   let event = new CustomEvent(eventName);
-  console.log("0000==",data);
   event.nodeId=data.nodeId; 
   event.title=data.title;
   event.parentNodeId=data.parentNodeId;

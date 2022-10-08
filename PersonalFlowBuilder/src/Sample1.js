@@ -212,7 +212,7 @@ export default function Sample1() {
          Reset 
         </button>
       </div>
-      <div style={{ width: 900, height: 600, background: "#D4FAB6" }}>
+      <div style={{ width: "100vw", height: "100vh", background: "#D4FAB6" }}>
         <FlowBuilder
      
      ref={flowRef}
