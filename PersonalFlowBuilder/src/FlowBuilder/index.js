@@ -1,5 +1,5 @@
 import React from "react";
-import {publish, subscribe} from "./events.js";
+import {publish, publishNode, subscribe} from "./events.js";
 import {useRete} from "./rete.js";
 
 
@@ -61,10 +61,10 @@ constructor(props=propsStructure) {
   }
   this.nodes= {
     add: function ({node}) {
-      publish("add node", node);
+      publishNode("add node", node);
     },
     remove: function ({nodeId}) {
-      publish("delete node", {detail:nodeId});
+      publish("delete node", {nodeId});
     },
     reset: function () {
       publish("nodesPositionReset");

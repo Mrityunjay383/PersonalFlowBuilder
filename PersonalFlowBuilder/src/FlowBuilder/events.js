@@ -8,9 +8,19 @@ function unsubscribe(eventName, listener) {
 
 function publish(eventName, data) {
   let event = new CustomEvent(eventName);
+  console.log("0000==",data);
   for(let key in data){
     event[key]=data[key];
   }
+  document.dispatchEvent(event);
+
+}
+function publishNode(eventName, data) {
+  let event = new CustomEvent(eventName);
+  console.log("0000==",data);
+  event.nodeId=data.nodeId; 
+  event.title=data.title;
+  event.parentNodeId=data.parentNodeId;
   document.dispatchEvent(event);
 
 }
@@ -24,4 +34,4 @@ function publishedReturn(eventName, data) {
   document.dispatchEvent(event);
 }
 
-export {publish, subscribe, unsubscribe, publishedReturn};
+export {publish, subscribe, unsubscribe, publishedReturn,publishNode};

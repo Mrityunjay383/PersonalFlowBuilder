@@ -8,7 +8,7 @@ import ConnectionPlugin from "rete-connection-plugin";
 import ContextMenuPlugin from "rete-context-menu-plugin";
 import ReactRenderPlugin from "rete-react-render-plugin";
 
-import {publish, publishTest, subscribe} from "./events";
+import {publish, publishNode, publishTest, subscribe} from "./events";
 import {Action} from "./nodes/Node";
 import {MyNode} from "./nodes/Start";
 
@@ -331,12 +331,12 @@ let instNode;
     
   });
   // event to remove node BFS traversal
-  subscribe("delete node", async ({detail}) => {
+  subscribe("delete node", async ({nodeId}) => {
     let editorData = editor.toJSON();
-    let todeletNode = editorData.nodes[detail];
+    let todeletNode = editorData.nodes[nodeId];
     let queue = [];
-    queue.push(detail);
-    let pnode = editorData.nodes[detail].inputs.num1.connections;
+    queue.push(nodeId);
+    let pnode = editorData.nodes[nodeId].inputs.num1.connections;
     let pid;
     let pconnections = [];
     if (pnode.length > 0) {
@@ -356,7 +356,7 @@ let instNode;
       });
     }
 
-    pconnections = pconnections.filter((c) => c.node != detail);
+    pconnections = pconnections.filter((c) => c.node != nodeId);
 
     pconnections.forEach((c) => {
       // maybe will try by checking if need is there to push or duplicacy is present
@@ -503,7 +503,7 @@ export function useRete(data) {
   let editorData=editorRef.current;
 
       for( let option in data.options.nodes){
-        publish("add node",data.options.nodes[option]);
+        publishNode("add node",data.options.nodes[option]);
             
     }
   // editorData.nodes.forEach((node)=>{

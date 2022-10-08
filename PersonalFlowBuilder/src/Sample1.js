@@ -49,7 +49,7 @@ export default function Sample1() {
     title: "new added node ",
     type: "email",
     options: {},
-    parentNodeId: "foo",
+    parentNodeId: "baz",
 
     meta: {
       // any data you need to render this node. Should be as minimal as possible and all optional.
@@ -87,11 +87,11 @@ export default function Sample1() {
     });
     flowManager.on("loaded", ({ options }) => {
       console.log("====================================");
-      console.log("document is fully loaded ", options);
+      console.log("document is fully loaded ", options); // options is the state all the nodes 
       console.log("====================================");
     });
     flowManager.on("position.changed", ({ options }) => {
-      console.log("canvas position is changed", options);
+      console.log("canvas position is changed", options); // here options is the object with position property.x /y/zoom
     });
     flowManager.on("node.mouse.over", ({ event, node }) => {
       console.log("mouse over--->", event, node);
@@ -190,7 +190,7 @@ export default function Sample1() {
         <button
           type="button"
           onClick={() => {
-            flowManager.nodes.add({node1});
+            flowManager.nodes.add({node:node1});
           }}
         >
           adding node method
@@ -198,10 +198,18 @@ export default function Sample1() {
         <button
           type="button"
           onClick={() => {
-            flowManager.nodes.remove({nodeId:"node-3"});
+            flowManager.nodes.remove({nodeId:"baz"});
           }}
         >
           removing node method
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            flowManager.reset();
+          }}
+        >
+         Reset 
         </button>
       </div>
       <div style={{ width: 900, height: 600, background: "#D4FAB6" }}>
