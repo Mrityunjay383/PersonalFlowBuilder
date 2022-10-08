@@ -144,7 +144,7 @@ export default function Sample1() {
     <>
       <div>
         <button type="button" onClick={handleclick}>
-          to add node
+           add node by state 
         </button>
         <button
           type="button"
@@ -185,7 +185,7 @@ export default function Sample1() {
             flowManager.nodes.reset();
           }}
         >
-          auto arrange
+          nodes reset 
         </button>
         <button
           type="button"
@@ -193,7 +193,7 @@ export default function Sample1() {
             flowManager.nodes.add({node:node1});
           }}
         >
-          adding node method
+          adding node by method
         </button>
         <button
           type="button"
