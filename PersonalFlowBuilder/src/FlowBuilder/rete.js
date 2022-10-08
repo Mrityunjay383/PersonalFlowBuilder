@@ -147,8 +147,18 @@ export async function createEditor(container, data) {
    nnode.title=node.data.preview;
    nnode.meta={x:node.position[0],
   y:node.position[1]};
+
  
-  spcomponent=()=>( 
+//  let con=node.inputs.get("num1");
+ 
+// if(con==undefined){
+//   nnode.parentNodeId="";
+// }
+// else{
+//   nnode.parentNodeId=con.connections
+// }
+//  console.log("node---",nnode,node);
+ spcomponent=()=>( 
       data.rendernodes({node:nnode,options:OPTIONS})
       ); 
  
