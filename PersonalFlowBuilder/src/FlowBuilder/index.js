@@ -1,6 +1,7 @@
 import React from "react";
 import {controller, publish, publishNode, subscribe} from "./events.js";
 import {useRete} from "./rete.js";
+import PropTypes from 'prop-types'; // ES6
 
 
 function Editor({data}) {
@@ -68,16 +69,21 @@ constructor(props) {
       },
     }
     this.on= async function (eventName, listener) {
-      await document.addEventListener(eventName, listener);
-    }
+      document.addEventListener(eventName, listener);
+   }
+    
   }
+  
  render(){
-  
-  
   return (
   <Editor  data={this.props}/>
   );
 }
 }
-
+Flowbuilder.propTypes={
+  theme: PropTypes.object,
+  options: PropTypes.object,
+  renderArrow: PropTypes.func,
+  rendernodes: PropTypes.func,
+}
 export default Flowbuilder;

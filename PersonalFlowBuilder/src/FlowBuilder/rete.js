@@ -311,6 +311,7 @@ let doarrange;
       editor.addNode(newnode);
       let editorD = editor.toJSON();
       await editor.fromJSON(editorD);
+      await engine.abort();
       await engine.process(editor.toJSON());
       let editorData = editor.toJSON();
       if (parentNodeId != "") {
@@ -378,14 +379,15 @@ let doarrange;
       });
     });
     editorData.nodes[pid].outputs.num.connections = pconnections;
-
-    // editor.removeNode(todeletNode);
-    await editor.fromJSON(editorData);
+  // ===========
+  await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
-    // ===========
-    publish("node.removed", {node:convNode(todeletNode),options:conversion(editor.nodes)}); // publishing for subscribed event node.removed
+  console.log("00----",editor.nodes)
+    await publish("node.removed", {node:convNode(todeletNode),options:conversion(editor.nodes)}); // publishing for subscribed event node.removed
     //=============
+   
+  
   });
 
   // to setPosition of canva

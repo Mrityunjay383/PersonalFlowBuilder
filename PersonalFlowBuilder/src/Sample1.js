@@ -46,11 +46,11 @@ export default function Sample1() {
     },
   };
   let node1 = {
-    nodeId: "node-5",
+    nodeId: `baz${Date.now()}`,
     title: "new added node ",
     type: "email",
     options: {},
-    parentNodeId: "baz",
+    parentNodeId: `baz`,
     meta: {
       // any data you need to render this node. Should be as minimal as possible and all optional.
       // if e.g. x & y are not present, your component must count it's position and set this meta data to node
@@ -85,7 +85,7 @@ console.log("===",);
       });
       flowManager.on("node.removed", ({ node, options }) => {
         console.log("node is removed===>", node, options);
-              setOptions(options);
+              
       });
       flowManager.on("loaded", ({ options }) => {
         console.log("====================================");
@@ -120,40 +120,15 @@ console.log("===",);
       });
     }
     
-  
-  
- 
 
   console.log(`#202227610501820 flowManager`, flowManager);
 
-  const handleclick = () => {
-    setOptions((curr) => {
-      return {
-        nodes: {
-          ...curr.nodes,
-          basz: {
-            nodeId: `basz-${Date.now()}`,
-            title: "node 4 ",
-            meta: {
-              // any data you need to render this node. Should be as minimal as possible and all optional.
-              // if e.g. x & y are not present, your component must count it's position and set this meta data to node
-              x: 300,
-              y: 300,
-            },
-            options: {},
-            parentNodeId: "foo",
-          },
-        },
-      };
-    });
-  };
+
 
   return (
     <>
       <div>
-        <button type="button" onClick={handleclick}>
-           add node by state 
-        </button>
+      
         <button
           type="button"
           onClick={() => {
@@ -198,7 +173,19 @@ console.log("===",);
         <button
           type="button"
           onClick={() => {
-            flowManager.nodes.add({node:node1});
+            flowManager.nodes.add({node:{
+              nodeId: `baz${Date.now()}`,
+              title: "new added node ",
+              type: "email",
+              options: {},
+              parentNodeId: `baz`,
+              meta: {
+                // any data you need to render this node. Should be as minimal as possible and all optional.
+                // if e.g. x & y are not present, your component must count it's position and set this meta data to node
+                x: 100,
+                y: 700,
+              },
+            }});
           }}
         >
           adding node by method
