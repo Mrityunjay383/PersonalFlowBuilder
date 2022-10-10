@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect} from "react";
 import React from "react";
 import { useRef } from "react";
 import FlowBuilder from "./FlowBuilder";
 
 export default function Sample1() {
+  
   let defaultOptions = {
     nodes: {
       foo: {
@@ -60,8 +61,9 @@ export default function Sample1() {
 
   const [options, setOptions] = useState(defaultOptions);
 
-  let flowRef = useRef(null);
+  let flowRef = useRef(new FlowBuilder());
   let flowManager = null;
+console.log("===",);
   if (flowRef.current) {
     flowManager = flowRef.current;
   }
@@ -83,6 +85,7 @@ export default function Sample1() {
     });
     flowManager.on("node.removed", ({ node, options }) => {
       console.log("node is removed===>", node, options);
+      setOptions(options);
     });
     flowManager.on("loaded", ({ options }) => {
       console.log("====================================");
@@ -92,26 +95,26 @@ export default function Sample1() {
     flowManager.on("position.changed", ({ options }) => {
       console.log("canvas position is changed", options); // here options is the object with position property.x /y/zoom
     });
-    flowManager.on("node.mouse.over", ({ event, node }) => {
-      console.log("mouse over--->", event, node);
+    flowManager.on("node.mouse.over", ({ event, node,options }) => {
+      console.log("mouse over--->", event, node,options );
     });
-    flowManager.on("node.mouse.out", ({ event, node }) => {
-      console.log("mouse out", event, node);
+    flowManager.on("node.mouse.out", ({ event, node,options  }) => {
+      console.log("mouse out", event, node,options );
     });
-    flowManager.on("node.mouse.down", ({ event, node }) => {
-      console.log("mouse down", event, node);
+    flowManager.on("node.mouse.down", ({ event, node,options  }) => {
+      console.log("mouse down", event, node,options );
     });
-    flowManager.on("node.mouse.up", ({ event, node }) => {
-      console.log("mouse up", event, node);
+    flowManager.on("node.mouse.up", ({ event, node ,options }) => {
+      console.log("mouse up", event, node,options );
     });
     flowManager.on("node.position_changed", ({ event, node, options }) => {
-      console.log("node position changed-->", event, node, options);
+      console.log("node position changed-->", node, options);
     });
     flowManager.on("node.drag.start", ({ event, node, options }) => {
-      console.log("node drag start", event, node, options);
+      console.log("node drag start",node, options);
     });
     flowManager.on("node.drag.end", ({ event, node, options }) => {
-      console.log("node drag end", event, node, options);
+      console.log("node drag end", node, options);
     });
   }
 
@@ -184,7 +187,7 @@ export default function Sample1() {
             flowManager.nodes.reset();
           }}
         >
-          nodes reset 
+          nodes position reset 
         </button>
         <button
           type="button"
@@ -213,8 +216,7 @@ export default function Sample1() {
       </div>
       <div style={{ width: "100vw", height: "100vh", background: "#D4FAB6" }}>
         <FlowBuilder
-     
-     ref={flowRef}
+         ref={flowRef}
           theme={{
             whitespaceAroundNode: 35,
             arrow: {

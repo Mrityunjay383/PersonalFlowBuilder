@@ -11,6 +11,7 @@ import ReactRenderPlugin from "rete-react-render-plugin";
 import {publish, publishNode, publishTest, subscribe} from "./events";
 import {Action} from "./nodes/Node";
 import {MyNode} from "./nodes/Start";
+import { conversion, convNode } from "./utils/conversion";
 
 var numSocket = new Rete.Socket("Number value");
 const anyTypeSocket = new Rete.Socket("Any type");
@@ -92,9 +93,9 @@ function incId(id_no) {
 }
 
 // mainn function for all  functionalities of Module
-export async function createEditor(container, data) {
-  let OPTIONS=data.options;
-  let nodes = data.options.nodes;
+export async function createEditor(container, DATA) {
+  let OPTIONS=DATA.options;
+  let nodes = DATA.options.nodes;
   var components = new AddComponent("start");
   var components2 = new NumComponent("node");
   var editor = new Rete.NodeEditor("Flow@0.1.0", container);
@@ -107,7 +108,7 @@ export async function createEditor(container, data) {
   editor.use(ConnectionPathPlugin, {
     options: {vertical: false, curvature: 0.4},
     arrow: {
-      color: data.theme.arrow.fill,
+      color: DATA.theme.arrow.fill,
       marker: "M-5,-10 L-5,10 L30,0 z",
     },
   });
@@ -142,12 +143,7 @@ export async function createEditor(container, data) {
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
   let  spcomponent;
-  let nnode={};
-   nnode.nodeId=node.id;  
-   nnode.title=node.data.preview;
-   nnode.meta={x:node.position[0],
-  y:node.position[1]};
-
+  
  
 //  let con=node.inputs.get("num1");
  
@@ -159,7 +155,7 @@ export async function createEditor(container, data) {
 // }
 //  console.log("node---",nnode,node);
  spcomponent=()=>( 
-      data.rendernodes({node:nnode,options:OPTIONS})
+      DATA.rendernodes({node:convNode(node),options:conversion(editor.nodes)})
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
@@ -173,7 +169,7 @@ export async function createEditor(container, data) {
 
     let v;
     // if(fromNodeId==="node-1" && toNodeId==="node-2"){
-    //   v=data.renderArrow({fromNodeId,toNodeId});
+    //   v=DATA.renderArrow({fromNodeId,toNodeId});
     // }
 
     if (v) {
@@ -186,8 +182,8 @@ export async function createEditor(container, data) {
     } else {
       el.getElementsByClassName("main-path")[0].setAttribute(
         "style",
-        `stroke:${data.theme.arrow.fill} !important;fill:${data.theme.arrow.stroke} !important;
-      stroke-width:${data.theme.arrow.strokeWidth} !important; `,
+        `stroke:${DATA.theme.arrow.fill} !important;fill:${DATA.theme.arrow.stroke} !important;
+      stroke-width:${DATA.theme.arrow.strokeWidth} !important; `,
       );
     }
   });
@@ -195,7 +191,7 @@ export async function createEditor(container, data) {
   
   editor.use(AutoArrangePlugin, {margin: {x: 50, y: 50}, depth: 100});
   let obj = document.querySelectorAll("path");
-  //  obj.style.stroke=data.theme.fill;
+  //  obj.style.stroke=DATA.theme.fill;
   var engine = new Rete.Engine("Flow@0.1.0");
 
   editor.register(components);
@@ -259,14 +255,13 @@ let doarrange;
   }
 
   editor.on(
-    "process nodecreated noderemoved connectioncreated connectionremoved",
+    "process connectioncreated connectionremoved",
     async () => {
       await engine.abort();
 
       await engine.process(editor.toJSON());
     },
   );
-let instNode;
   editor.on("translate", (data) => {
     const ndata={options:{position:{x:data.x,y:data.y,zoom:data.transform.k,}}};
     publish("position.changed", ndata);
@@ -274,24 +269,27 @@ let instNode;
   let run = 0;
   editor.on("nodetranslate", (data) => {
     if (run === 0) {
-      publish("node.drag.start", {node:data.node,event:{...data,type:"dragstart"},options:OPTIONS});
+      publish("node.drag.start", {node:convNode(data.node),event:{type:"dragstart"},options:conversion(editor.nodes)});
       run++;
     } else {
-      publish("node.position_changed", {node:data.node,event:data,options:OPTIONS});
+      publish("node.position_changed", {node:convNode(data.node),event:data,options:conversion(editor.nodes)});
     }
   });
+  
   editor.on("nodedraged", (data) => {
-    run = 0;
-    publish("node.drag.end", {node:data,event:{type:"dragend"},options:OPTIONS});
-  });
+  if(run!==0){
+    publish("node.drag.end", {node:convNode(data),event:{type:"dragend"},options:conversion(editor.nodes)});
+
+  }
+      });
   editor.on("selectnode", (data) => {
-    let ndata={event:data.e,node:data.node,options:OPTIONS};//OPTIONS which we have from users 
+    let ndata={event:data.e,node:convNode(data.node),options:conversion(editor.nodes)};//OPTIONS which we have from users 
     publish("node.click", ndata); // call node.click
     
   });
   // when window gets loaded
   window.addEventListener("load", (d) => {
-    const ndata={options:OPTIONS};
+    const ndata={options:conversion(editor.nodes)};
     publish("loaded", ndata);
   });
 
@@ -336,7 +334,7 @@ let instNode;
       await engine.process(editor.toJSON());
   
       // ===========
-      const nd={node:editorD.nodes[nodeId],options:OPTIONS};
+      const nd={node:convNode(editorD.nodes[nodeId]),options:conversion(editor.nodes)};
       await publish("node.added", nd ); // publishing for subscribed event node.added
       //=============
       await editor.trigger("arrange", {node: editor.nodes[0]});
@@ -387,7 +385,7 @@ let instNode;
     await engine.abort();
     await engine.process(editor.toJSON());
     // ===========
-    publish("node.removed", {node:todeletNode,options:OPTIONS}); // publishing for subscribed event node.removed
+    publish("node.removed", {node:convNode(todeletNode),options:conversion(editor.nodes)}); // publishing for subscribed event node.removed
     //=============
   });
 
@@ -500,13 +498,13 @@ let instNode;
   return editor;
 }
 
-export function useRete(data) {
+export function useRete(DATA) {
   const [container, setContainer] = useState(null);
   const editorRef = useRef();
 
   useEffect(() => {
     if (container) {
-      createEditor(container, data).then((value) => {
+      createEditor(container, DATA).then((value) => {
         editorRef.current = value;
       });
     }
@@ -515,14 +513,14 @@ export function useRete(data) {
   useEffect(() => {
   let editorData=editorRef.current;
 
-      for( let option in data.options.nodes){
-        publishNode("add node",data.options.nodes[option]);
+      for( let option in DATA.options.nodes){
+        publishNode("add node",DATA.options.nodes[option]);
             
     }
   // editorData.nodes.forEach((node)=>{
   // })
-  }, [data.options.nodes]);
-
+  }, [DATA.options.nodes]);
+  
   useEffect(() => {
     return () => {
       if (editorRef.current) {

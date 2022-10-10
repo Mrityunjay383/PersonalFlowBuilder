@@ -29,6 +29,7 @@ function publishedReturn(eventName, data) {
   const event = new CustomEvent(eventName, {detail: data});
   event.event=data.event;
   event.node=data.node;
+  event.options=data.options;
   document.dispatchEvent(event);
 }
 

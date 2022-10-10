@@ -1,6 +1,7 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
 import {publish, publishedReturn} from "../events";
+import { convNode,conversion,spObj} from "../utils/conversion";
 import "./nodes.css" 
 export class MyNode extends Node {
   render() {
@@ -8,32 +9,30 @@ export class MyNode extends Node {
     const {outputs, controls, inputs, selected} = this.state;
 
     return (
-      <div style={{border:"none" ,background:"inherit", }}
-        draggable={true}
+      <div id={`${node.id}`} style={{border:"none" ,background:"inherit",}}
+      className={`node`} 
+      draggable={true}
         onMouseDown={(e) => {
-          publishedReturn("node.mouse.down", {event:e.nativeEvent,node});
+          publishedReturn("node.mouse.down", {event:e.nativeEvent,node:convNode(node),options:spObj});
         }}
-        onMouseOver={(e) => {
-          publishedReturn("node.mouse.over", {event:e.nativeEvent,node});
-        }}
-        onMouseOut={(e) => {
-          publishedReturn("node.mouse.out", {event:e.nativeEvent,node});
-        }}
+        onMouseEnter={(e) => {
+          e.preventDefault();
+          if(e.relatedTarget.id==="123"){
+            publishedReturn("node.mouse.over", {event:e.nativeEvent,node:convNode(node),options:spObj});
+          }
+          else{
+            publishedReturn("node.mouse.out", {event:e.nativeEvent,node:convNode(node),options:spObj});
+          }
+         
+          }}
         onMouseUp={(e) => {
-          publishedReturn("node.mouse.up", {event:e.nativeEvent,node});
+          publishedReturn("node.mouse.up", {event:e.nativeEvent,node:convNode(node),options:spObj});
         }}
-        className={`node   flowBuilder_${node.id}`}
-      
-      >
-        <div className={ `flowBuilder_${node.id}_title`} >
-
-          {/* <img className="playIcon" src={playIcon}/>  */}
-          {/* {node.data.preview} */}
-
-        </div>
+        >
         {/* Outputs */}
 
         {/* Controls */}
+        
         {controls.map((control) => (
           <Control
             className="control"
@@ -42,7 +41,8 @@ export class MyNode extends Node {
             innerRef={bindControl}
           />
         ))}
-      
+          
+          <div>      
         {outputs.map((output) => (
           <div   className="output" key={output.key}>
             <Socket
@@ -53,6 +53,7 @@ export class MyNode extends Node {
             />
           </div>
         ))}
+        </div>
       </div>
     );
   }

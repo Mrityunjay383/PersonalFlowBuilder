@@ -12,3 +12,10 @@
     left: 16.7%;
     top:10%;
     }
+    /* .node .control{
+      padding: 0px 0px !important;
+
+    } */
+    .node{
+      padding-bottom: 0px;
+    }

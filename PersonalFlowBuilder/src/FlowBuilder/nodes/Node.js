@@ -1,6 +1,7 @@
 import React from "react";
 import {Control, Node, Socket} from "rete-react-render-plugin";
 import {publish, publishedReturn} from "../events";
+import { convNode,conversion,spObj} from "../utils/conversion";
 import "./nodes.css"
 export class Action extends Node {
   render() {
@@ -8,19 +9,22 @@ export class Action extends Node {
     const {outputs, controls, inputs} = this.state;
 
     return (
-      <div style={{border:"none" ,background:"inherit"}}
+      <div id={`${node.id}`} style={{border:"none" ,background:"inherit"}}
         draggable
         onMouseDown={(e) => {
-          publishedReturn("node.mouse.down", {event:e.nativeEvent,node});
+          publishedReturn("node.mouse.down", {event:e.nativeEvent,node:convNode(node),options:spObj});
         }}
-        onMouseOver={(e) => {
-          publishedReturn("node.mouse.over", {event:e.nativeEvent,node});
-        }}
-        onMouseOut={(e) => {
-          publishedReturn("node.mouse.out", {event:e.nativeEvent,node});
+        onMouseEnter={(e) => {
+          e.preventDefault();
+          if(e.relatedTarget.id==="123"){
+            publishedReturn("node.mouse.over", {event:e.nativeEvent,node:convNode(node),options:spObj});
+          }
+          else if(e.relatedTarget.id!=="123"){
+            publishedReturn("node.mouse.out", {event:e.nativeEvent,node:convNode(node),options:spObj});
+          }
         }}
         onMouseUp={(e) => {
-          publishedReturn("node.mouse.up", {event:e.nativeEvent,node});
+          publishedReturn("node.mouse.up", {event:e.nativeEvent,node:convNode(node),options:spObj});
         }}
         className={`node    flowBuilder_${node.id}`}
       >
@@ -51,10 +55,9 @@ export class Action extends Node {
             innerRef={bindControl}
           />
         ))}
-
+        <div>
         {outputs.map((output) => (
           <div  className="output" style ={{visibility: "hidden"}}key={output.key}>
-          
             <Socket
               type="output"
               socket={output.socket}
@@ -63,6 +66,7 @@ export class Action extends Node {
             />
           </div>
         ))}
+        </div>
       </div>
     );
   }
