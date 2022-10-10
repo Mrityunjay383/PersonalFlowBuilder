@@ -1,5 +1,6 @@
+const controller = new AbortController();
 function subscribe(eventName, listener) {
-  document.addEventListener(eventName, listener);
+  document.addEventListener(eventName, listener,);
 }
 
 function unsubscribe(eventName, listener) {
@@ -33,4 +34,4 @@ function publishedReturn(eventName, data) {
   document.dispatchEvent(event);
 }
 
-export {publish, subscribe, unsubscribe, publishedReturn,publishNode};
+export {publish, subscribe, unsubscribe, publishedReturn,publishNode,controller};

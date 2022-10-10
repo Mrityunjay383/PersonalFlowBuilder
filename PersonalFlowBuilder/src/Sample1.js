@@ -67,56 +67,62 @@ console.log("===",);
   if (flowRef.current) {
     flowManager = flowRef.current;
   }
-  if (flowManager) {
-    flowManager.on("node.click", ({ event, node, options }) => {
-      console.log("====================================");
-      console.log("node.click is triggered on", {
-        event: event,
-        node: node,
-        options: options,
+    if (flowManager) {
+      flowManager.on("node.click", ({ event, node, options }) => {
+        console.log("====================================");
+        console.log("node.click is triggered on", {
+          event: event,
+          node: node,
+          options: options,
+        });
+        console.log(
+          "====== event.width ==============================",
+          event.width
+        );
       });
-      console.log(
-        "====== event.width ==============================",
-        event.width
-      );
-    });
-    flowManager.on("node.added", ({ node, options }) => {
-      console.log("nodes is added====>", node, options);
-    });
-    flowManager.on("node.removed", ({ node, options }) => {
-      console.log("node is removed===>", node, options);
-      setOptions(options);
-    });
-    flowManager.on("loaded", ({ options }) => {
-      console.log("====================================");
-      console.log("document is fully loaded ", options); // options is the state all the nodes 
-      console.log("====================================");
-    });
-    flowManager.on("position.changed", ({ options }) => {
-      console.log("canvas position is changed", options); // here options is the object with position property.x /y/zoom
-    });
-    flowManager.on("node.mouse.over", ({ event, node,options }) => {
-      console.log("mouse over--->", event, node,options );
-    });
-    flowManager.on("node.mouse.out", ({ event, node,options  }) => {
-      console.log("mouse out", event, node,options );
-    });
-    flowManager.on("node.mouse.down", ({ event, node,options  }) => {
-      console.log("mouse down", event, node,options );
-    });
-    flowManager.on("node.mouse.up", ({ event, node ,options }) => {
-      console.log("mouse up", event, node,options );
-    });
-    flowManager.on("node.position_changed", ({ event, node, options }) => {
-      console.log("node position changed-->", node, options);
-    });
-    flowManager.on("node.drag.start", ({ event, node, options }) => {
-      console.log("node drag start",node, options);
-    });
-    flowManager.on("node.drag.end", ({ event, node, options }) => {
-      console.log("node drag end", node, options);
-    });
-  }
+      flowManager.on("node.added", ({ node, options }) => {
+        console.log("nodes is added====>", node, options);
+      });
+      flowManager.on("node.removed", ({ node, options }) => {
+        console.log("node is removed===>", node, options);
+              setOptions(options);
+      });
+      flowManager.on("loaded", ({ options }) => {
+        console.log("====================================");
+        console.log("document is fully loaded ", options); // options is the state all the nodes 
+        console.log("====================================");
+      });
+      flowManager.on("node.mouse.over", ({ event, node,options }) => {
+        console.log("mouse over--->", event, node,options );
+      });
+      flowManager.on("node.mouse.out", ({ event, node,options  }) => {
+        console.log("mouse out", event, node,options );
+      });
+      
+      flowManager.on("position.changed", ({ options }) => {
+        console.log("canvas position is changed", options); // here options is the object with position property.x /y/zoom
+      });
+    
+      flowManager.on("node.mouse.down", ({ event, node,options  }) => {
+        console.log("mouse down", event, node,options );
+      });
+      flowManager.on("node.mouse.up", ({ event, node ,options }) => {
+        console.log("mouse up", event, node,options );
+      });
+      flowManager.on("node.position_changed", ({ event, node, options }) => {
+        console.log("node position changed-->", node, options);
+      });
+      flowManager.on("node.drag.start", ({ event, node, options }) => {
+        console.log("node drag start",node, options);
+      });
+      flowManager.on("node.drag.end", ({ event, node, options }) => {
+        console.log("node drag end", node, options);
+      });
+    }
+    
+  
+  
+ 
 
   console.log(`#202227610501820 flowManager`, flowManager);
 

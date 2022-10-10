@@ -1,5 +1,5 @@
 import React from "react";
-import {publish, publishNode, subscribe} from "./events.js";
+import {controller, publish, publishNode, subscribe} from "./events.js";
 import {useRete} from "./rete.js";
 
 
@@ -67,8 +67,8 @@ constructor(props) {
         publish("nodesPositionReset");
       },
     }
-    this.on= function (eventName, listener) {
-      document.addEventListener(eventName, listener);
+    this.on= async function (eventName, listener) {
+      await document.addEventListener(eventName, listener);
     }
   }
  render(){

@@ -7,8 +7,7 @@ import ConnectionPathPlugin from "rete-connection-path-plugin";
 import ConnectionPlugin from "rete-connection-plugin";
 import ContextMenuPlugin from "rete-context-menu-plugin";
 import ReactRenderPlugin from "rete-react-render-plugin";
-
-import {publish, publishNode, publishTest, subscribe} from "./events";
+import {controller, publish, publishNode, publishTest, subscribe} from "./events";
 import {Action} from "./nodes/Node";
 import {MyNode} from "./nodes/Start";
 import { conversion, convNode } from "./utils/conversion";
@@ -507,16 +506,21 @@ export function useRete(DATA) {
       createEditor(container, DATA).then((value) => {
         editorRef.current = value;
       });
+
     }
+    // controller.abort();
   }, [container]);
   
   useEffect(() => {
   let editorData=editorRef.current;
-
       for( let option in DATA.options.nodes){
-        publishNode("add node",DATA.options.nodes[option]);
-            
-    }
+        publishNode("add node",DATA.options.nodes[option]); 
+      }
+    // for (const eventType of Object.keys(getEventListeners(document))) {
+    //   getEventListeners(document)[eventType].forEach((o) => {
+    //     o.remove();
+    //   });
+    // }
   // editorData.nodes.forEach((node)=>{
   // })
   }, [DATA.options.nodes]);
