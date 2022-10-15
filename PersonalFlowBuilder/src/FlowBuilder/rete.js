@@ -108,7 +108,7 @@ export async function createEditor(container, DATA) {
     options: {vertical: false, curvature: 0.4},
     arrow: {
       color: DATA.theme.arrow.fill,
-      marker: "M-5,-10 L-5,10 L30,0 z",
+      marker: `M-5,-${DATA.theme.arrow.size.side1} L-5,${DATA.theme.arrow.size.side2} L${DATA.theme.arrow.size.side3},0 z`,
     },
   });
 

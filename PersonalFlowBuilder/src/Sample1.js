@@ -192,6 +192,7 @@ export default function Sample1() {
                 arrow: {
                   fill: theme.palette.error.dark,
                   strokeWidth: "1px",
+                  size:{side1:10,side2:10,side3:30}
                 },
               }}
               options={options}
