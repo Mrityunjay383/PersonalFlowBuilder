@@ -154,7 +154,7 @@ export async function createEditor(container, DATA) {
 // }
 //  console.log("node---",nnode,node);
  spcomponent=()=>( 
-      DATA.rendernodes({node:convNode(node),options:conversion(editor.nodes)})
+      DATA.renderNode({node:convNode(node),options:conversion(editor.nodes)})
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
@@ -417,10 +417,10 @@ let doarrange;
   subscribe("positionReset", () => {
     const {area} = editor.view;
     AreaPlugin.zoomAt(editor, editor.nodes);
-
     // area.transform.x=area.container.;
-    // area.transform.y=area.container.;
-    area.transform.k = 1;
+    // // area.transform.y=area.container.;
+    // area.transform.k = 1;
+    area.container.style.alignSelf="center";
     area.update();
   });
   subscribe("nodesPositionReset", () => {

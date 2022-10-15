@@ -29,7 +29,7 @@ subscribe("catchPosition", async ({x1,y1,zoom1}) => {
 const propsStructure = {
   theme:null,
   options:null,
-  rendernodes:null,
+  renderNode:null,
 } 
  class Flowbuilder extends React.Component {
 
@@ -84,6 +84,6 @@ Flowbuilder.propTypes={
   theme: PropTypes.object,
   options: PropTypes.object,
   renderArrow: PropTypes.func,
-  rendernodes: PropTypes.func,
+  renderNode: PropTypes.func,
 }
 export default Flowbuilder;
