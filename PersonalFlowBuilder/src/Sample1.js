@@ -162,7 +162,7 @@ export default function Sample1() {
               <Button
                 onClick={() => {
                   let current = flowManager.position.get();
-                  flowManager.position.setPosition({x:current.x,y:current.y,zoom: current.zoom + 0.3});
+                  flowManager.position.setPosition({zoom: current.zoom + 0.3});
                 }}
               >
                 Zoom In
@@ -170,7 +170,7 @@ export default function Sample1() {
               <Button
                 onClick={() => {
                   let current = flowManager.position.get();
-                  flowManager.position.setPosition({x:current.x,y:current.y,zoom: current.zoom - 0.3});
+                  flowManager.position.setPosition({zoom: current.zoom - 0.3});
                 }}
               >
                 Zoom Out
@@ -192,9 +192,10 @@ export default function Sample1() {
                 arrow: {
                   fill: theme.palette.error.dark,
                   strokeWidth: "1px",
-                  size:{side1:10,side2:10,side3:30}
+                  size:{side1:10,side2:10,side3:25}
                 },
               }}
+              disableZoom={true}
               options={options}
               renderNode={({node, options}) => {
                 return (

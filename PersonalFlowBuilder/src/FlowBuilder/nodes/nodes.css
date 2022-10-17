@@ -3,18 +3,16 @@
   }
 
 .output {
-  all:unset ;
-  right: 16.7%;
-  top:10%;
+  
+  right: 18px;
+  top:40%;
   }
-  .input {
-    all:unset ;
-    left: 16.7%;
-    top:10%;
+.input {
+    left: 18px;
+    top:37%;
     }
     /* .node .control{
       padding: 0px 0px !important;
 
     } */
   
-    

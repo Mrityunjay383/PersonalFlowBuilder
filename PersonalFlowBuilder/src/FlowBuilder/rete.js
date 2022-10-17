@@ -165,7 +165,10 @@ export async function createEditor(container, DATA) {
     let fromNodeId, toNodeId;
     toNodeId = connection.input.node.id;
     fromNodeId = connection.output.node.id;
-
+    el.style.zIndex=1;
+    // el.style.paddingTop="30px";
+    el.style.position="relative";
+    console.log("===>el--->",el.children[0]);
     let v;
     // if(fromNodeId==="node-1" && toNodeId==="node-2"){
     //   v=DATA.renderArrow({fromNodeId,toNodeId});
@@ -393,25 +396,46 @@ let doarrange;
   // to setPosition of canva
   subscribe("setPosition", async ({x,y,zoom}) => {
     
+    let { area } = editor.view; 
+    console.log("zoom---",zoom)
+ console.log(area.transform.k);
+    if(zoom<area.transform.k){
+    let rect = area.el.getBoundingClientRect();
+    let ox = (rect.left - window.innerWidth / 2) * (-.1);
+    let oy = (rect.top - window.innerHeight / 2) * (-.1);
+    area.zoom(area.transform.k -.1, ox, oy);
+   }
+   else if(zoom>area.transform.k){
+     let rect = area.el.getBoundingClientRect();
+     let ox = (rect.left - window.innerWidth / 2) * .1;
+     let oy = (rect.top - window.innerHeight / 2) * .1;
+     area.zoom(area.transform.k+.1, ox, oy);
+   }
+   else{
+    console.log("no move"); 
+   }
+   if(x){
+    area.transform.x=x;
+   }
+   if(y){
+    area.transform.y=y;
+   }
+     area.update();
     
-    
-    const {area} = editor.view;
-    area.transform.x = x;
-    area.transform.y = y;
-    area.transform.k = zoom;
-    area.update();
   });
   let posx, posy, zoom;
   let flag = 0;
+  
+    
+  //   area.update();
   subscribe("getPosition", async () => {
     const {area} = editor.view;
     posx = area.transform.x;
     posy = area.transform.y;
     zoom = area.transform.k;
+    console.log(AreaPlugin,area,editor);
     publish("catchPosition", {x1: posx, y1: posy, zoom1:zoom});
-    //  if(1){
-    //   await
-    //  }
+ 
   });
 
   subscribe("positionReset", () => {
@@ -420,13 +444,21 @@ let doarrange;
     // area.transform.x=area.container.;
     // // area.transform.y=area.container.;
     // area.transform.k = 1;
+    
     area.container.style.alignSelf="center";
     area.update();
   });
   subscribe("nodesPositionReset", () => {
     editor.trigger("arrange", {node: editor.nodes[0]});
   });
-  
+  editor.on('zoom', ({ source }) => { 
+    if(DATA.disableZoom){
+      return source !== 'wheel'; 
+    }
+    else{
+      return true;
+    }
+    });
   subscribe("resetEverything", async () => {
     let data = editor.toJSON();
     data.nodes = {};
