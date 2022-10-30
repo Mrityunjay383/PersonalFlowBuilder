@@ -76,6 +76,14 @@ export default function Sample1() {
     flowManager.on("node.drag.end", ({event, node, options}) => {
       console.log("node drag end", {event, node, options});
     });
+    flowManager.on("change", ({ node, options }) => {
+      console.log("changed --nodes ",node,options);
+    });
+    flowManager.on("node.meta.updated", ({ node, options }) => {
+       console.log("meta updated ");
+
+    });
+
   }
 
   console.log(`#202227610501820 flowManager`, flowManager);
@@ -192,7 +200,7 @@ export default function Sample1() {
                 arrow: {
                   fill: theme.palette.error.dark,
                   strokeWidth: "1px",
-                  size:{side1:10,side2:10,side3:25}
+                  size:10
                 },
               }}
               disableZoom={true}

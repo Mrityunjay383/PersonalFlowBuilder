@@ -103,12 +103,12 @@ export async function createEditor(container, DATA) {
   editor.use(ConnectionPlugin);
   editor.use(ReactRenderPlugin, {createRoot});
 
-
+console.log("eoo==",editor);
   editor.use(ConnectionPathPlugin, {
     options: {vertical: false, curvature: 0.4},
     arrow: {
       color: DATA.theme.arrow.fill,
-      marker: `M-5,-${DATA.theme.arrow.size.side1} L-5,${DATA.theme.arrow.size.side2} L${DATA.theme.arrow.size.side3},0 z`,
+      marker: `M-5,-${DATA.theme.arrow.size} L-5,${DATA.theme.arrow.size} L25,0 z`,
     },
   });
 
@@ -135,15 +135,17 @@ export async function createEditor(container, DATA) {
         connection.el
           .getElementsByClassName("marker")[0]
           .setAttribute("style", ` fill:${fill} !important;`);
-      }
+        }
+
     });
+    
   });
 
    const edi=editor
   editor.on("rendernode",({ el, node, component, bindSocket, bindControl })=>{
   let  spcomponent;
   
- 
+   
 //  let con=node.inputs.get("num1");
  
 // if(con==undefined){
@@ -158,7 +160,9 @@ export async function createEditor(container, DATA) {
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
-  
+  console.log(
+    "this is control of node  ",el.childNodes[0]
+  )
 });
 
   editor.on("renderconnection", ({el, connection, points}) => {
@@ -168,12 +172,11 @@ export async function createEditor(container, DATA) {
     el.style.zIndex=1;
     // el.style.paddingTop="30px";
     el.style.position="relative";
-    console.log("===>el--->",el.children[0]);
     let v;
     // if(fromNodeId==="node-1" && toNodeId==="node-2"){
     //   v=DATA.renderArrow({fromNodeId,toNodeId});
     // }
-
+    el.children[0].id=`flow-builder-arrow-${fromNodeId}___${toNodeId}`;
     if (v) {
       let {fill, stroke, strokeWidth} = v;
       el.getElementsByClassName("main-path")[0].setAttribute(
@@ -188,10 +191,11 @@ export async function createEditor(container, DATA) {
       stroke-width:${DATA.theme.arrow.strokeWidth} !important; `,
       );
     }
+    
   });
 
   
-  editor.use(AutoArrangePlugin, {margin: {x: 50, y: 50}, depth: 100});
+  editor.use(AutoArrangePlugin, {offset: {x: -50, y: 50},margin:{x:40,y:40}, depth:100});  
   let obj = document.querySelectorAll("path");
   //  obj.style.stroke=DATA.theme.fill;
   var engine = new Rete.Engine("Flow@0.1.0");
@@ -264,17 +268,19 @@ let doarrange;
       await engine.process(editor.toJSON());
     },
   );
-  editor.on("translate", (data) => {
+  editor.on("translate", async (data) => {
     const ndata={options:{position:{x:data.x,y:data.y,zoom:data.transform.k,}}};
     publish("position.changed", ndata);
   });
   let run = 0;
-  editor.on("nodetranslate", (data) => {
+  editor.on("nodetranslate", async(data) => {
     if (run === 0) {
-      publish("node.drag.start", {node:convNode(data.node),event:{type:"dragstart"},options:conversion(editor.nodes)});
+      await publish("node.drag.start", {node:convNode(data.node),event:{type:"dragstart"},options:conversion(editor.nodes)});
       run++;
     } else {
-      publish("node.position_changed", {node:convNode(data.node),event:data,options:conversion(editor.nodes)});
+      await publish("node.position_changed", {node:convNode(data.node),event:data,options:conversion(editor.nodes)});
+      await publish("node.meta.updated",{node:convNode(data.node),event:data,options:conversion(editor.nodes)});
+      await publish("change",{node:null,options:conversion(editor.nodes)})
     }
   });
   
@@ -297,6 +303,8 @@ let doarrange;
 
   ///customisation event driven programming =======.......
 
+let BufferNodes={};
+let BufferSizes={};
   // event of add node
   subscribe("add node", async ({nodeId,title,parentNodeId }) => {
     let flag=1;
@@ -307,10 +315,11 @@ let doarrange;
     });
     if(flag){
       var newnode = await components2.createNode();
-      newnode.position = [100, 0];
+      // newnode.position = [100, 0];
       newnode.data.preview=title;
       newnode.id=nodeId;
-
+      console.log("nodes==",editor.nodes);
+      
       editor.addNode(newnode);
       let editorD = editor.toJSON();
       await editor.fromJSON(editorD);
@@ -337,14 +346,21 @@ let doarrange;
       await engine.process(editor.toJSON());
   
       // ===========
-      const nd={node:convNode(editorD.nodes[nodeId]),options:conversion(editor.nodes)};
+      editor.nodes.forEach((node)=>BufferNodes[node.id]={x:node.toJSON().position[0],y:node.toJSON().position[1]});
+      
+      console.log("buffer node=",BufferNodes,"area",editor.view);
+
+      const nd={node:convNode(editorData.nodes[nodeId]),options:conversion(editor.nodes)};
+      
       await publish("node.added", nd ); // publishing for subscribed event node.added
+      await publish("change",nd);
       //=============
-      await editor.trigger("arrange", {node: editor.nodes[0]});
-      await publish("positionReset");
+      // await editor.autoPositionNodes();
+      await editor.trigger("arrange", {node:editor.nodes[0]});
     }
     
   });
+  console.log("area plugin -->",AreaPlugin);
   // event to remove node BFS traversal
   subscribe("delete node", async ({nodeId}) => {
     let editorData = editor.toJSON();
@@ -386,10 +402,9 @@ let doarrange;
   await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
-  console.log("00----",editor.nodes)
     await publish("node.removed", {node:convNode(todeletNode),options:conversion(editor.nodes)}); // publishing for subscribed event node.removed
     //=============
-   
+    await publish("change",{node:convNode(todeletNode),options:conversion(editor.nodes)});
   
   });
 
@@ -397,8 +412,6 @@ let doarrange;
   subscribe("setPosition", async ({x,y,zoom}) => {
     
     let { area } = editor.view; 
-    console.log("zoom---",zoom)
- console.log(area.transform.k);
     if(zoom<area.transform.k){
     let rect = area.el.getBoundingClientRect();
     let ox = (rect.left - window.innerWidth / 2) * (-.1);
@@ -421,7 +434,7 @@ let doarrange;
     area.transform.y=y;
    }
      area.update();
-    
+    await publish("change",{node:null,options:conversion(editor.nodes)})
   });
   let posx, posy, zoom;
   let flag = 0;
@@ -438,7 +451,7 @@ let doarrange;
  
   });
 
-  subscribe("positionReset", () => {
+  subscribe("positionReset", async() => {
     const {area} = editor.view;
     AreaPlugin.zoomAt(editor, editor.nodes);
     // area.transform.x=area.container.;
@@ -447,9 +460,11 @@ let doarrange;
     
     area.container.style.alignSelf="center";
     area.update();
+    await publish("change",{node:null,options:conversion(editor.nodes)})
   });
   subscribe("nodesPositionReset", () => {
     editor.trigger("arrange", {node: editor.nodes[0]});
+    
   });
   editor.on('zoom', ({ source }) => { 
     if(DATA.disableZoom){
@@ -527,7 +542,7 @@ let doarrange;
   editor.view.resize();
   editor.trigger("process");
   AreaPlugin.zoomAt(editor, editor.nodes);
-
+  await publish("change",{node:null,options:conversion(editor.nodes)})
   return editor;
 }
 

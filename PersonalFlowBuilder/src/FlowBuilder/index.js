@@ -44,7 +44,6 @@ constructor(props) {
     }
     this.position ={
       setPosition: function ({x, y, zoom}) {
-        console.log("setposition called", x, y, zoom);
         publish("setPosition", {x, y, zoom});
       },
       get:  function () {
