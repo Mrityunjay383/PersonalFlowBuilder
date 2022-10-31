@@ -9,7 +9,7 @@ export class Action extends Node {
     const {outputs, controls, inputs} = this.state;
 
     return (
-      <div id={`${node.id}`} style={{border:"none" ,background:"inherit"}}
+      <div id={`${node.id}`} style={{border:"none" ,background:"inherit",}}
         draggable
         onMouseDown={(e) => {
           publishedReturn("node.mouse.down", {event:e.nativeEvent,node:convNode(node),options:spObj});
@@ -26,12 +26,12 @@ export class Action extends Node {
         onMouseUp={(e) => {
           publishedReturn("node.mouse.up", {event:e.nativeEvent,node:convNode(node),options:spObj});
         }}
-        className={`node    flowBuilder_${node.id}`}
+        className={`node    flow-builder-${node.id}`}
       >
         {/* Inputs */}
         {inputs.map((input,index) => (
            <div key={index}>
-          <div style={{display:"flex"}} className=" flowBuilder_${node.id}_title " key={input.key}>
+          <div style={{display:"flex"}} className=" flow-builder-${node.id}_title " key={input.key}>
           <div style={{visibility:"hidden"}}>
             <Socket
               type="input"
@@ -55,9 +55,10 @@ export class Action extends Node {
             innerRef={bindControl}
           />
         ))}
+        
         <div>
         {outputs.map((output) => (
-          <div  className="output" style ={{visibility: "hidden"}}key={output.key}>
+          <div  className="flow-builder-output" style ={{visibility: "hidden"}}key={output.key}>
             <Socket
               type="output"
               socket={output.socket}

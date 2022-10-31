@@ -10,7 +10,7 @@ export class MyNode extends Node {
 
     return (
       <div id={`${node.id}`} style={{border:"none" ,background:"inherit",}}
-      className={`node`} 
+      className={`node flow-builder-${node.id}`} 
       draggable={true}
         onMouseDown={(e) => {
           publishedReturn("node.mouse.down", {event:e.nativeEvent,node:convNode(node),options:spObj});
@@ -44,7 +44,7 @@ export class MyNode extends Node {
           
           <div>      
         {outputs.map((output) => (
-          <div   className="output" key={output.key}>
+          <div   className="flow-builder-output" key={output.key}>
             <Socket
               type="output"
               socket={output.socket}

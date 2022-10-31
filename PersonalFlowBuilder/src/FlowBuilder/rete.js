@@ -160,10 +160,22 @@ console.log("eoo==",editor);
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
-  console.log(
-    "this is control of node  ",el.childNodes[0]
-  )
+ 
 });
+editor.on("rendercontrol",({ el, control })=>{
+   // const ele=el.childNodes
+  // console.log(ele.length);
+  // for(let i =0;i< ele.length;i++){
+  //   console.log("print hoja pls",ele[i]);
+  // }
+  setTimeout(() => {
+    let nayavar=document.getElementById(el.parentElement.id)
+     BufferSizes[el.parentElement.id]=[nayavar?.offsetWidth,nayavar?.offsetHeight]
+    
+  }, 10);
+
+  
+})
 
   editor.on("renderconnection", ({el, connection, points}) => {
     let fromNodeId, toNodeId;
@@ -303,11 +315,11 @@ let doarrange;
 
   ///customisation event driven programming =======.......
 
-let BufferNodes={};
+let buffernodesposition={};
 let BufferSizes={};
   // event of add node
   subscribe("add node", async ({nodeId,title,parentNodeId }) => {
-    let flag=1;
+    let flag=1,up=1;
     editor.nodes.forEach((n)=>{
       if(n.id===nodeId){
         flag=0;
@@ -315,7 +327,32 @@ let BufferSizes={};
     });
     if(flag){
       var newnode = await components2.createNode();
-      // newnode.position = [100, 0];
+      editor.nodes.forEach((node)=>{
+        buffernodesposition[node.id]=[node.toJSON().position[0],node.toJSON().position[1]]
+      });
+      
+      console.log("buffer node=",buffernodesposition,"===",BufferSizes,"area",editor.view);
+      if(editor.nodes.length!=0){
+        let X=buffernodesposition[parentNodeId];
+        // while(true){
+        //   buffernodesposition[nodeId].x=X+400;
+        //   let flagB=true;
+        //   editor.nodes.forEach((node)=>{
+        //     if(Math.abs(buffernodesposition[nodeId].x-buffernodesposition[node.id].x)<400){
+        //       flagB=false;
+        //     }
+        //   })
+        //   if(flagB){
+        //     newnode.position = [BufferSizes[parentNodeId].width+400, 0];
+        //     break;
+        //   }
+          
+        
+        // }
+        
+      }
+
+      
       newnode.data.preview=title;
       newnode.id=nodeId;
       console.log("nodes==",editor.nodes);
@@ -346,17 +383,16 @@ let BufferSizes={};
       await engine.process(editor.toJSON());
   
       // ===========
-      editor.nodes.forEach((node)=>BufferNodes[node.id]={x:node.toJSON().position[0],y:node.toJSON().position[1]});
       
-      console.log("buffer node=",BufferNodes,"area",editor.view);
 
       const nd={node:convNode(editorData.nodes[nodeId]),options:conversion(editor.nodes)};
       
       await publish("node.added", nd ); // publishing for subscribed event node.added
       await publish("change",nd);
+     
       //=============
       // await editor.autoPositionNodes();
-      await editor.trigger("arrange", {node:editor.nodes[0]});
+      // await editor.trigger("arrange", {node:editor.nodes[0]});
     }
     
   });
