@@ -183,7 +183,7 @@ editor.on("rendercontrol",({ el, control })=>{
     let fromNodeId, toNodeId;
     toNodeId = connection.input.node.id;
     fromNodeId = connection.output.node.id;
-    el.style.zIndex=1;
+    el.style.zIndex=-1;
     // el.style.paddingTop="30px";
     el.style.position="relative";
     let v;
@@ -340,7 +340,7 @@ let BufferSizes={};
       var newnode = await components2.createNode();
       console.log("buffer node=",buffernodesposition,"===",BufferSizes,"area",editor.view);
       if(editor.nodes.length!=0){
-        let X=buffernodesposition[parentNodeId][0]+BufferSizes[parentNodeId][0]+30;
+        let X=buffernodesposition[parentNodeId][0]+BufferSizes[parentNodeId][0]+DATA.theme.whitespaceAroundNode;
         let Y= buffernodesposition[parentNodeId][1];
         let cnt=0;
         let down=0;
@@ -356,13 +356,13 @@ let BufferSizes={};
               X=X+50;
             }
             else if(i!=parentNodeId &&cnt<=2){
-              Y=buffernodesposition[i][1]-BufferSizes[i][1]-30;
+              Y=buffernodesposition[i][1]-BufferSizes[i][1]-DATA.theme.whitespaceAroundNode;
             }
             if(cnt>2){
-              Y=buffernodesposition[i][1]+BufferSizes[i][1]+30;
+              Y=buffernodesposition[i][1]+BufferSizes[i][1]+DATA.theme.whitespaceAroundNode;
             }
             // else if(i!=parentNodeId&&up==true){
-            //   Y=buffernodesposition[i][1]-BufferSizes[i][1]-30;
+            //   Y=buffernodesposition[i][1]-BufferSizes[i][1]-DATA.theme.whitespaceAroundNode;
             //   down=true;
             // }
             console.log("before break",c);

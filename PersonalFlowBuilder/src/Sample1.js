@@ -196,7 +196,7 @@ export default function Sample1() {
             <FlowBuilder
               ref={flowRef}
               theme={{
-                whitespaceAroundNode: 35,
+                whitespaceAroundNode: 30, 
                 arrow: {
                   fill: theme.palette.error.dark,
                   strokeWidth: "1px",
