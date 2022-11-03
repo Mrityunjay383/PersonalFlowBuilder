@@ -355,10 +355,10 @@ let BufferSizes={};
             if(i==parentNodeId){
               X=X+50;
             }
-            else if(i!=parentNodeId &&cnt<=3){
+            else if(i!=parentNodeId &&cnt<=2){
               Y=buffernodesposition[i][1]-BufferSizes[i][1]-30;
             }
-            if(cnt>3){
+            if(cnt>2){
               Y=buffernodesposition[i][1]+BufferSizes[i][1]+30;
             }
             // else if(i!=parentNodeId&&up==true){
