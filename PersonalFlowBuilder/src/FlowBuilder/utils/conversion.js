@@ -20,8 +20,8 @@ function convNode(node){
     let nnode={};
    nnode.nodeId=node.id;  
    nnode.title=node.data.preview;
-   nnode.meta={x:node.position[0],
-  y:node.position[1]};
+   nnode.meta={x:node.position[0].toFixed(2),
+  y:node.position[1].toFixed(2)};
 
 //   let input;
 //   if(node.inputs.get("num1")===undefined){

@@ -160,7 +160,9 @@ console.log("eoo==",editor);
       ); 
  
   node.controls.set("preview",new NumControl(edi,spcomponent, "preview", node, true) )
- 
+
+ buffernodesposition[node.id]=[node.toJSON().position[0],node.toJSON().position[1]]
+  
 });
 editor.on("rendercontrol",({ el, control })=>{
    // const ele=el.childNodes
@@ -293,6 +295,9 @@ let doarrange;
       await publish("node.position_changed", {node:convNode(data.node),event:data,options:conversion(editor.nodes)});
       await publish("node.meta.updated",{node:convNode(data.node),event:data,options:conversion(editor.nodes)});
       await publish("change",{node:null,options:conversion(editor.nodes)})
+      
+      buffernodesposition[data.node.id]=[data.node.toJSON().position[0],data.node.toJSON().position[1]]
+      console.log("changed x--",data.node.toJSON().position[0],data.node.toJSON().position[1],buffernodesposition[data.node.id]);
     }
   });
   
@@ -317,9 +322,15 @@ let doarrange;
 
 let buffernodesposition={};
 let BufferSizes={};
+
   // event of add node
   subscribe("add node", async ({nodeId,title,parentNodeId }) => {
     let flag=1,up=1;
+    
+      editor.nodes.forEach((node)=>{
+ buffernodesposition[node.id]=[node.toJSON().position[0],node.toJSON().position[1]]
+      });
+    
     editor.nodes.forEach((n)=>{
       if(n.id===nodeId){
         flag=0;
@@ -327,31 +338,49 @@ let BufferSizes={};
     });
     if(flag){
       var newnode = await components2.createNode();
-      editor.nodes.forEach((node)=>{
-        buffernodesposition[node.id]=[node.toJSON().position[0],node.toJSON().position[1]]
-      });
-      
       console.log("buffer node=",buffernodesposition,"===",BufferSizes,"area",editor.view);
       if(editor.nodes.length!=0){
-        let X=buffernodesposition[parentNodeId];
-        // while(true){
-        //   buffernodesposition[nodeId].x=X+400;
-        //   let flagB=true;
-        //   editor.nodes.forEach((node)=>{
-        //     if(Math.abs(buffernodesposition[nodeId].x-buffernodesposition[node.id].x)<400){
-        //       flagB=false;
-        //     }
-        //   })
-        //   if(flagB){
-        //     newnode.position = [BufferSizes[parentNodeId].width+400, 0];
-        //     break;
-        //   }
-          
-        
-        // }
+        let X=buffernodesposition[parentNodeId][0]+BufferSizes[parentNodeId][0]+30;
+        let Y= buffernodesposition[parentNodeId][1];
+        let cnt=0;
+        let down=0;
+        let c=true;
+        while(c){
+          console.log( "-->",BufferSizes[parentNodeId][1]);
+            c=false;
+          for(let i in buffernodesposition){
+            if((Math.abs(X-buffernodesposition[i][0])<BufferSizes[i][0])&&(Math.abs(Y-buffernodesposition[i][1])<BufferSizes[i][1])){
+            c=true;
+            cnt++; 
+            if(i==parentNodeId){
+              X=X+50;
+            }
+            else if(i!=parentNodeId &&cnt<=3){
+              Y=buffernodesposition[i][1]-BufferSizes[i][1]-30;
+            }
+            if(cnt>3){
+              Y=buffernodesposition[i][1]+BufferSizes[i][1]+30;
+            }
+            // else if(i!=parentNodeId&&up==true){
+            //   Y=buffernodesposition[i][1]-BufferSizes[i][1]-30;
+            //   down=true;
+            // }
+            console.log("before break",c);
+              break;
+            console.log("after break");
+            }
+            else{
+              console.log("sahi =",i,c);
+            }
+          } 
+           
+          //break;
+        }
+        // while loop ends
+        newnode.position = [X,Y];
+      
         
       }
-
       
       newnode.data.preview=title;
       newnode.id=nodeId;
