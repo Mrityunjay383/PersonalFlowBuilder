@@ -526,7 +526,7 @@ export async function createEditor(container, DATA) {
         queue.push(c.node);
       });
     }
-
+    
     pconnections = pconnections.filter((c) => c.node != nodeId);
 
     pconnections.forEach((c) => {
@@ -542,6 +542,7 @@ export async function createEditor(container, DATA) {
     await editor.fromJSON(editorData);
     await engine.abort();
     await engine.process(editor.toJSON());
+    delete buffernodesposition[nodeId];
     await publish("node.removed", {
       node: convNode(todeletNode),
       options: conversion(editor.nodes),

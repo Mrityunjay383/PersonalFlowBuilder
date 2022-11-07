@@ -223,7 +223,7 @@ let number=1;
                     strokeWidth: "2px",
                   };
               }}
-              newNodePosition="auto" //   auto | up  | down  to decide where the next node will be added 
+              newNodePosition="down" //   auto | up  | down  to decide where the next node will be added 
               renderNode={({node, options}) => {
                 return (
                   <Card style={{textAlign: "center"}}>
