@@ -404,25 +404,44 @@ export async function createEditor(container, DATA) {
               Math.abs(Y - buffernodesposition[i][1]) < BufferSizes[i][1]
             ) {
               c = true;
-              cnt++;
-              if (i == parentNodeId) {
-                X = X + 50;
-              } else if (DATA.newNodePosition=="up" &&i != parentNodeId) {
-                Y =
-                  buffernodesposition[i][1] -
-                  BufferSizes[i][1] -
-                  DATA.theme.whitespaceAroundNode;
+             
+              if(DATA.newNodePosition=="auto"){
+                cnt++;
+                console.log("auto --",cnt);
+                if (i == parentNodeId) {
+                  X = X + 50;
+                } else if (i != parentNodeId&&cnt<=2) {
+                  Y =
+                    buffernodesposition[i][1] +
+                    BufferSizes[i][1] +
+                    DATA.theme.whitespaceAroundNode;
+                }
+                if (cnt > 2) {
+                  Y =
+                    buffernodesposition[i][1] -
+                    BufferSizes[i][1] -
+                    DATA.theme.whitespaceAroundNode;
+                }
+                else if(i!=parentNodeId){
+                  Y=buffernodesposition[i][1]+BufferSizes[i][1]+DATA.theme.whitespaceAroundNode;
+                  down=true;
+                }
               }
-              // if (cnt > 2) {
-              //   Y =
-              //     buffernodesposition[i][1] +
-              //     BufferSizes[i][1] +
-              //     DATA.theme.whitespaceAroundNode;
-              // }
-              else if(DATA.newNodePosition=="down"&&i!=parentNodeId&&up==true){
-                Y=buffernodesposition[i][1]+BufferSizes[i][1]+DATA.theme.whitespaceAroundNode;
-                down=true;
+              else{
+                if (i == parentNodeId) {
+                  X = X + 50;
+                } else if (DATA.newNodePosition=="up" &&i != parentNodeId) {
+                  Y =
+                    buffernodesposition[i][1] -
+                    BufferSizes[i][1] -
+                    DATA.theme.whitespaceAroundNode;
+                }
+                else if(DATA.newNodePosition=="down"&&i!=parentNodeId&&up==true){
+                  Y=buffernodesposition[i][1]+BufferSizes[i][1]+DATA.theme.whitespaceAroundNode;
+                  down=true;
+                }
               }
+              
               console.log("before break", c);
               break;
               console.log("after break");
