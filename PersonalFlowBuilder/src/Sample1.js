@@ -87,7 +87,7 @@ export default function Sample1() {
   }
 
   console.log(`#202227610501820 flowManager`, flowManager);
-
+let number=1;
   return (
     <>
       <Grid container justifyContent={"center"} spacing={4}>
@@ -183,6 +183,18 @@ export default function Sample1() {
               >
                 Zoom Out
               </Button>
+              <button
+        type="button"
+        onClick={() => {
+          flowManager.renderArrow("node-1", "node-2", {
+            fill: "blue",
+            stroke: "none",
+            strokeWidth: "2px",
+          }); // reload the page
+        }}
+      >
+        renderArrow
+      </button>
             </Card>
           </Grid>
         </Grid>
@@ -205,6 +217,13 @@ export default function Sample1() {
               }}
               disableZoom={true}
               options={options}
+              renderArrow={({ fromNodeId, toNodeId }) => {
+                  return {
+                    fill: "green",
+                    strokeWidth: "2px",
+                  };
+              }}
+              newNodePosition="down" // up  | down
               renderNode={({node, options}) => {
                 return (
                   <Card style={{textAlign: "center"}}>
