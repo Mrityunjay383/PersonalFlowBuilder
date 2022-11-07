@@ -197,7 +197,7 @@ export default function Sample1() {
               ref={flowRef}
               theme={{
                 whitespaceAroundNode: 30, 
-                arrow: {
+                arrow: { 
                   fill: theme.palette.error.dark,
                   strokeWidth: "1px",
                   size:10
